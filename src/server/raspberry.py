@@ -1,6 +1,8 @@
 from config import Config
 from arduino import Arduino
+from metrics import Exporter
 import errors as err
+import threading
 from flask import Flask, jsonify
 
 # Parse the config file
@@ -14,6 +16,14 @@ socket = [True] * 16
 
 # Create a Flask application
 app = Flask(__name__)
+
+# Initialize the Prometheus Exporter
+Exporter().initialize(app)
+
+# Start a background thread to listen for data over
+# serial and expose it via Prometheus
+listener_thread = threading.Thread(target=arduino.listen)
+listener_thread.start()
 
 # Define a route for the /ping endpoint to validate connections
 @app.route('/ping')

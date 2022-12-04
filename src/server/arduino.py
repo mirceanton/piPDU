@@ -1,17 +1,13 @@
 import serial
 from config import Config
+from metrics import Exporter
 
 
 class Arduino:
-    # Singleton instance of the Arduino class
-    __instance = None
-
-    # Configured device and baud rate
-    __device = Config().data['arduino']['device']
-    __baud = Config().data['arduino']['baud']
-
-    # Serial connection to the Arduino
-    __conn = None
+    __instance = None   # Singleton instance of the Arduino class
+    __conn = None       # Serial connection to the Arduino
+    __device = Config().data['arduino']['device']   # Configured device file
+    __baud = Config().data['arduino']['baud']       # Configured baud rate
 
     # Method for initializing the serial connection
     def __connect(self):
@@ -26,10 +22,11 @@ class Arduino:
             raise Exception(
                 'Error: Failed to open serial connection to Arduino')
         else:
-            print("Serial connection initialized OK")
+            print("Info: Serial connection initialized OK")
 
     # Method for listening for data from the serial connection
     def listen(self):
+        print('Info: Listening for data from serial...')
         while True:
             # Read data from the serial connection
             data = self.__conn.readline()
@@ -37,14 +34,22 @@ class Arduino:
             # Split the data on the separator string
             numbers = data.split(b',')
 
-            # Convert the numbers to floats and store them in a list
-            numbers = [float(n) for n in numbers]
+            # Log to console
+            print('Info: Received data from serial: ', numbers)
 
-            print('Received data from serial: ', numbers)
+            # Convert the numbers to floats and store them in a list
+            try:
+                numbers = [float(n) for n in numbers]
+
+                # Update Prometheus metrics
+                Exporter().update(numbers)
+            except Exception as ex:
+                print(ex)
 
     # Method for writing data to the serial connection
     def write(self, msg):
         self.__conn.write(msg.encode())
+        print('Info: Sent data over serial: ', msg)
 
     # Method for creating a singleton instance of the Arduino class
     def __new__(cls):
