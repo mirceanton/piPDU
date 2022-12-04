@@ -28,9 +28,6 @@ theme:
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
-  font:
-    text: Cascadia Code PL
-    code: Cascadia Mono PL
   language: en
   features:
     - navigation.instant
