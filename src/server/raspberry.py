@@ -1,6 +1,7 @@
 from config import Config
 from arduino import Arduino
-from flask import Flask
+import errors as err
+from flask import Flask, jsonify
 
 # Parse the config file
 config = Config().data
@@ -17,29 +18,52 @@ app = Flask(__name__)
 # Define a route for the /ping endpoint to validate connections
 @app.route('/ping')
 def ping():
-    return 'pong'
+    return jsonify({
+        'success': True,
+        'payload': 'pong'
+    })
+
+# Flask route for checking the status of a socket
+@app.route('/api/v1/sockets/<int:number>', methods=['GET'])
+def check_status(number: int):
+    # Return with a custom error message if the number is out of range
+    if number < 0 or number > 15:
+        return err.index_out_of_range()
+
+    # Return the cached status of the socket
+    return jsonify({
+        'success': True,
+        'payload': {
+            'status': socket[number]
+        }
+    })
 
 # Flask route for sending commands to Arduino
-@app.route('/api/v1/sockets/<socket_id>', methods=['POST'])
-def send_command(number):
-    # Convert the socket number to an integer
-    number = int(number)
+@app.route('/api/v1/sockets/<int:number>', methods=['POST'])
+def send_command(number: int):
+    # Return with a custom error message if the number is out of range
+    if number < 0 or number > 15:
+        return err.index_out_of_range()
 
-    # Check if the number is in the valid range
-    if 0 <= number <= 15:
-        # Convert the number to a lowercase character
-        command = chr(number + 97)
+    # Convert the number to a lowercase character
+    command = chr(number + 97) # 97 is the ascii code for 'a'
 
-        # Write the command to the serial connection
-        arduino.write(command.encode())
+    # Write the command to the serial connection
+    arduino.write(command.encode())
 
-        # Update the state array
-        socket[number] = ~socket[number]
+    # Update the state array
+    socket[number] = ~socket[number]
 
-        print('Sent command to serial:', command)
-    else:
-        # Raise an exception with a custom error message if the number is out of range
-        raise Exception('Error: Socket number should be between 0 and 15')
+    print('Sent command to serial:', command)
+    return jsonify({
+        'success': True,
+        'payload': {
+            'socket_number': number,
+            'command': command,
+            'new_status': socket[number],
+            'old_status': ~socket[number],
+        }
+    })
 
 # Start the Flask API server
 app.run(host=config['api']['host'], port=config['api']['port'])
