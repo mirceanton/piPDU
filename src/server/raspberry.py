@@ -8,6 +8,9 @@ config = Config().data
 # Initialize serial connection to the arduino
 arduino = Arduino()
 
+# State array for the 17 sockets
+socket = [True] * 16
+
 # Create a Flask application
 app = Flask(__name__)
 
@@ -29,6 +32,9 @@ def send_command(number):
 
         # Write the command to the serial connection
         arduino.write(command.encode())
+
+        # Update the state array
+        socket[number] = ~socket[number]
 
         print('Sent command to serial:', command)
     else:
