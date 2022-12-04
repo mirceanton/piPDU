@@ -31,11 +31,11 @@ class Arduino:
             # Read data from the serial connection
             data = self.__conn.readline()
 
+            # Log to console
+            print('Info: Received data from serial: ', data)
+
             # Split the data on the separator string
             numbers = data.split(b',')
-
-            # Log to console
-            print('Info: Received data from serial: ', numbers)
 
             # Convert the numbers to floats and store them in a list
             try:
