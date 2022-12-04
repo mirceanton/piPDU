@@ -42,6 +42,10 @@ class Arduino:
 
             print('Received data from serial: ', numbers)
 
+    # Method for writing data to the serial connection
+    def write(self, msg):
+        self.__conn.write(msg.encode())
+
     # Method for creating a singleton instance of the Arduino class
     def __new__(cls):
         # Create a new instance if another one doesn't already exist
