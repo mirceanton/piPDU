@@ -59,7 +59,7 @@ def send_command(number: int):
     command = chr(number + 97) # 97 is the ascii code for 'a'
 
     # Write the command to the serial connection
-    arduino.write(command.encode())
+    arduino.write(command)
 
     # Update the state array
     socket[number] = ~socket[number]
