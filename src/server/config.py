@@ -9,28 +9,31 @@ class Config:
     # Path to the configuration file
     __path = "config.yaml"
 
-    # Default configuration values
-    data = {
-        'api': {
-            'host': '0.0.0.0',
-            'port': 8080
-        },
-        'metrics': {
-            'enabled': True,
-        },
-        'arduino': {
-            'device': '/dev/ttyACM0',
-            'baud': 9600
-        },
-    }
+    # Configuration data
+    data = None
 
     # Method for parsing the configuration file
-    def parse(self):
+    def __parse(self):
         print("Info: Parsing config file...")
 
         # Check if the config file exists
         if not os.path.exists(self.__path):
             print("Warning: No config file found. Assuming default values.")
+
+            # Set default values for config options
+            self.data = {
+                'api': {
+                    'host': '0.0.0.0',
+                    'port': 8080
+                },
+                'metrics': {
+                    'enabled': True,
+                },
+                'arduino': {
+                    'device': '/dev/ttyACM0',
+                    'baud': 9600
+                },
+            }
             return
 
         # Read config from YAML file
@@ -45,4 +48,8 @@ class Config:
     def __new__(cls):
         if Config.__instance is None:
             Config.__instance = object.__new__(cls)
+
+        if Config.__instance.data is None:
+            Config.__instance.__parse()
+
         return Config.__instance
