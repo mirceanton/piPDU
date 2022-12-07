@@ -1,7 +1,7 @@
-from config import Config
-from arduino import Arduino
-from metrics import Exporter
-import errors as err
+from common.config import Config
+from common.arduino import Arduino
+from common.metrics import Exporter
+import common.errors as err
 import threading
 from flask import Flask, jsonify
 
