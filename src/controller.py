@@ -1,11 +1,12 @@
 # Import the necessary libraries
 import RPi.GPIO as GPIO
-import time
+from RPLCD.i2c import CharLCD
 
 # Define connections
 led_pins = []     # TODO
 btn_arr_row = []  # TODO
 btn_arr_col = []  # TODO
+lcd = CharLCD(i2c_expander='PCF8574', address=0x27)
 
 # ===============================================
 # SETUP
