@@ -1,6 +1,6 @@
 import serial
-from config import Config
-from metrics import Exporter
+from common.config import Config
+from common.metrics import Exporter
 
 
 class Arduino:

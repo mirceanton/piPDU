@@ -1,6 +1,6 @@
 from prometheus_flask_exporter import PrometheusMetrics
 from prometheus_client import Gauge
-from config import Config
+from common.config import Config
 
 
 class Exporter:
