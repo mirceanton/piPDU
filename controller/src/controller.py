@@ -10,9 +10,9 @@ from common.config import Config
 METRICS_URL = f"http://{Config().api.host}:{Config().api.port}/metrics"
 
 # Initialize GPIO
-GPIO.setwarnings(False)		# Disable GPIO Warnings
-GPIO.cleanup()				# Clean up the GPIO pins just in case they're in a bad state
+GPIO.setwarnings(False)	# Disable GPIO Warnings
 GPIO.setmode(GPIO.BCM)	# Set up the GPIO pins for output
+GPIO.cleanup()			# Clean up the GPIO pins just in case they're in a bad state
 
 # Initialize LCD Display
 display = LCD()
@@ -23,18 +23,20 @@ for led in Config().led.pins:
 	GPIO.setup(led, GPIO.OUT)
 	GPIO.output(led, GPIO.LOW)
 
-while True:
-	response = requests.get(METRICS_URL)
-	metrics = []
+try:
+	while True:
+		response = requests.get(METRICS_URL)
+		metrics = []
 
-	for line in response.text.split("\n"):
-		if re.search("^socket_", line):
-			metrics.append(line.split(' ')[1])
-	
-	for index, value in enumerate(metrics):
-		print(f"Socket {index}: {value}")
+		for line in response.text.split("\n"):
+			if re.search("^socket_", line):
+				metrics.append(line.split(' ')[1])
+		
+		for index, value in enumerate(metrics):
+			print(f"Socket {index}: {value}")
 
-	time.sleep(Config().metrics.periodSeconds)
+		time.sleep(Config().metrics.periodSeconds)
 
-# Clean up the GPIO pins
-GPIO.cleanup()
+# Clean up the GPIO pins when the script is interrupted
+except:
+	GPIO.cleanup()
