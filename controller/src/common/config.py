@@ -22,7 +22,7 @@ class Config:
 		# Set values from config file/defaults
 		self.api = SimpleNamespace(**data['api'])
 		self.metrics = SimpleNamespace(**data.get('metrics', defaults.metrics))
-		self.ledPins = SimpleNamespace(**data.get('led', defaults.led))
+		self.led = SimpleNamespace(**data.get('led', defaults.led))
 		self.btnArray = SimpleNamespace(**data.get('btnArray', defaults.btnArray))
 		self.lcd = SimpleNamespace(**data.get('lcd', defaults.lcd))
 
