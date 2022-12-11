@@ -2,6 +2,3 @@
 api:
   host: 192.168.10.160
   port: 8080
-
-metrics:
-  enabled: true
