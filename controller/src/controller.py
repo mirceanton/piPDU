@@ -1,6 +1,7 @@
 # Import the necessary libraries
 import RPi.GPIO as GPIO
 import time
+import threading
 from common.lcd import LCD
 from common.led_array import led_array_init, led_array_update
 from common.button_matrix import ButtonMatrix
@@ -21,10 +22,11 @@ LCD().idle()			# Initialize LCD Display
 # METRICS THREAD
 # =================================================================================================
 def metrics_loop():
-	Metrics().collect()	# Collect the metrics
-	led_array_update()	# Update the LED status indicators
-	LCD.update()
-	time.sleep(Config().metrics.pollPeriodSeconds)
+    while True:
+        Metrics().collect()	# Collect the metrics
+        led_array_update()	# Update the LED status indicators
+        LCD.update()
+        time.sleep(Config().metrics.pollPeriodSeconds)
 
 metrics_thread = threading.Thread(target=metrics_loop)
 metrics_thread.start()
@@ -33,7 +35,8 @@ metrics_thread.start()
 # MAIN LOOP
 # =================================================================================================
 try:
-	while True:
-		ButtonMatrix().poll()
+    while True:
+        ButtonMatrix().poll()
+        time.sleep(Config().btnArray.pollPeriodSeconds)
 except:
-	GPIO.cleanup()
+    GPIO.cleanup()
