@@ -1926,6 +1926,7 @@
     )
   )
 
+  (gr_rect (start 271.78 7.62) (end 20.32 125.476) (layer "Edge.Cuts") (width 0.1) (fill none) (tstamp f65567ca-9c24-4b2b-88a0-49a14c0e549c))
   (gr_text "-  +" (at 124.46 40.64) (layer "F.SilkS") (tstamp 027418f7-a955-4f02-8297-350f204d149a)
     (effects (font (size 1.5 1.5) (thickness 0.3)))
   )
