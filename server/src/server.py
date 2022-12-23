@@ -20,8 +20,8 @@ app.register_blueprint(api_v1, url_prefix="/api/v1/")
 Exporter().initialize(app)
 
 # Start a the Arduino communication thread in the background
-# listener_thread = threading.Thread(target=Arduino().listen)
-# listener_thread.start()
+listener_thread = threading.Thread(target=Arduino().listen)
+listener_thread.start()
 
 print(app.url_map)
 
