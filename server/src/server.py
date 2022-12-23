@@ -1,20 +1,20 @@
 from common.config import Config
 from common.arduino import Arduino
 from common.metrics import Exporter
-from routes.ping import blueprint as bp_ping
-from routes.socket import blueprint as bp_sock
+from common.socket import SocketArray
+from api.ping import blueprint as route_ping
+from api.v1.api import api_v1
 import threading
 from flask import Flask, jsonify
 
-# State array for the 17 sockets
-socket = [True] * 16
+SocketArray() # initialize sockets
 
 # Create a Flask application
 app = Flask(__name__)
 
 # Register the endpoints
-app.register_blueprint(bp_ping, url_prefix="/ping")
-app.register_blueprint(bp_sock, url_prefix="/api/v1/sockets")
+app.register_blueprint(route_ping, url_prefix="/ping")
+app.register_blueprint(api_v1, url_prefix="/api/v1/")
 
 # Initialize the Prometheus Exporter
 Exporter().initialize(app)
