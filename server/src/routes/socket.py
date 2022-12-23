@@ -1,4 +1,5 @@
-from flask import Blueprint
+from flask import Blueprint, request, jsonify
+import common.errors as err
 
 blueprint = Blueprint('sockets', __name__)
 
@@ -16,29 +17,31 @@ def check_status(number: int):
     return jsonify({
         'success': True,
         'payload': {
-            'status': socket[number]
+            'status': "N/A"
         }
     })
 
 # Flask route for sending commands to Arduino
-@blueprint.route('/<int:number>', methods=['POST'])
-def send_command(number: int):
-    # Convert the number to a lowercase character
-    command = chr(number + 97) # 97 is the ascii code for 'a'
+@blueprint.route('/allOff', methods=['POST'])
+def all_off(number: int):
+    pass
 
-    # Write the command to the serial connection
-    arduino.write(command)
+# Flask route for sending commands to Arduino
+@blueprint.route('/allOn', methods=['POST'])
+def all_on(number: int):
+    pass
+    
+# Flask route for sending commands to Arduino
+@blueprint.route('/on/<int:number>', methods=['POST'])
+def socket_on(number: int):
+    pass
 
-    # Update the state array
-    socket[number] = ~socket[number]
+# Flask route for sending commands to Arduino
+@blueprint.route('/off/<int:number>', methods=['POST'])
+def socket_off(number: int):
+    pass
 
-    print('Sent command to serial:', command)
-    return jsonify({
-        'success': True,
-        'payload': {
-            'socket_number': number,
-            'command': command,
-            'new_status': socket[number],
-            'old_status': ~socket[number],
-        }
-    })
+# Flask route for sending commands to Arduino
+@blueprint.route('/toggle/<int:number>', methods=['POST'])
+def socket_toggle(number: int):
+    pass
