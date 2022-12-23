@@ -1,0 +1,12 @@
+---
+socket_1:
+  name: main_server
+  initState: True
+
+socket_7:
+  name: nas
+  initState: False
+
+socket_4:
+  name: pi4b
+  initState: False
