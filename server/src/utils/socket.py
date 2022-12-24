@@ -38,6 +38,9 @@ class Socket:
             `1` if the socket state has changed
             `0` if there was nothing to do.
 
+    toggle() -> None:
+        If the socket is currently on, turn it off and vice versa.
+
     info() -> dict:
         Returns information about the socket in a dictionary format.
     """
@@ -56,7 +59,7 @@ class Socket:
         logger.info(f"Socket {self.id} turned on.")
         return 1
 
-    def turnOff(self, force=False):
+    def turnOff(self):
         """
         Turns the socket off.
         """
@@ -69,6 +72,17 @@ class Socket:
         self.state = False
         logger.info(f"Socket {self.id} turned off.")
         return 1
+
+    def toggle(self) -> None:
+        """
+        Toggles the socket.
+        """
+        logger.info(f"Toggling socket {self.id} off.")
+        logger.debug(f"Current state for socket {self.id} is {self.state}")
+        if self.state:
+            self.turnOff()
+        else:
+            self.turnOff()
 
     def info(self):
         """
