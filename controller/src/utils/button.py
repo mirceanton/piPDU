@@ -148,4 +148,4 @@ class Button:
         self.current_state = current_state
         self.old_state = old_state
         self.last_press_time = time
-        self.url = f"http://{Config().api.host}:{Config().api.port}/api/v1/sockets/toggle/{self.index}"
+        self.url = f"http://{Config().api.host}:{Config().api.port}/api/v1/socket/{self.index}/toggle"
