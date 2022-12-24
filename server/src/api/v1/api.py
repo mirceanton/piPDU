@@ -5,7 +5,7 @@
 # =================================================================================================
 from flask import Blueprint
 from api.v1.routes.socket import blueprint as bp_single_socket
-from api.v1.routes.sockets import blueprint as bp_all_sockets
+from api.v1.routes.all_sockets import blueprint as bp_all_sockets
 
 api_v1 = Blueprint('v1', __name__)
 
