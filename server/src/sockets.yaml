@@ -10,3 +10,25 @@ socket_7:
 socket_4:
   name: pi4b
   initState: False
+  prePowerOnHook:
+    command:
+      - /bin/sh
+      - -c
+      - echo 'I am called before powering on'
+    ignoreErrors: True
+  postPowerOnHook:
+    command:
+      - bash
+      - -c
+      - echo 'I am getting executed after powering on'
+  prePowerOffHook:
+    command:
+      - /bin/sh
+      - -c
+      - echo 'I am called before powering off'
+    ignoreErrors: True
+  postPowerOffHook:
+    command:
+      - bash
+      - -c
+      - echo 'I am getting executed after powering off'

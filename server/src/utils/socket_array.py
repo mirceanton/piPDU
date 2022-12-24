@@ -40,8 +40,12 @@ class SocketArray:
             sck = data[f"socket_{i}"] if f"socket_{i}" in data else {}
             self.sockets.append(Socket(
                 id = i,
-                name = sck['name'] if 'name' in sck else None,
-                initState = sck['initState'] == "True" if 'initState' in sck else True
+                name = sck.get('name', None),
+                initState = sck.get('initState', "True") == "True",
+                prePowerOnHook = sck.get('prePowerOnHook', {})
+                postPowerOnHook = sck.get('postPowerOnHook', {})
+                prePowerOffHook = sck.get('prePowerOffHook', {})
+                postPowerOffHook = sck.get('postPowerOffHook', {})
             ))
 
     def __new__(cls):
