@@ -50,7 +50,7 @@ def off(number: int):
     return resp.socket_off_ok(number)
 
 @blueprint.route('/<int:number>/toggle', methods=['POST'])
-def off(number: int):
+def toggle(number: int):
     """
     Toggle a given socket
     """
