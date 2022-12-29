@@ -74,10 +74,16 @@ void listenToSerial() {
     // Read the next available character
     char c = Serial.read();
 
-    // If the character is between 'a' and 'p', toggle the corresponding relay
+    // If the character is between 'a' and 'p', turn off the corresponding relay
     if (c >= 'a' && c <= 'p') {
       int relayNumber = c - 'a'; // Calculate the relay number
-      toggleRelay(relayNumber);
+      turnOffRelay(relayNumber);
+    }
+
+    // If the character is between 'A' and 'P', turn on the corresponding relay
+    if (c >= 'A' && c <= 'P') {
+      int relayNumber = c - 'A'; // Calculate the relay number
+      turnOnRelay(relayNumber);
     }
     
     // If the character is 'q', turn OFF all relays
