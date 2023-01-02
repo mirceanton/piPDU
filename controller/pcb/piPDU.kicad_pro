@@ -121,7 +121,8 @@
       "track_widths": [
         0.0,
         1.0,
-        2.0
+        2.0,
+        4.0
       ],
       "via_dimensions": [
         {
@@ -134,6 +135,10 @@
         },
         {
           "diameter": 2.5,
+          "drill": 1.0
+        },
+        {
+          "diameter": 4.0,
           "drill": 1.0
         }
       ],
