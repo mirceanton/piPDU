@@ -6,20 +6,20 @@ metrics = {
     'pollPeriodSeconds': 1,
 }
 
-led = {
-    'pins':  [13, 19, 26, 21, 20, 16, 12, 1, 7, 8, 25, 24, 23, 18, 15, 14]
+expanders = {
+    'addresses': [ 0x20, 0x21, 0x22, 0x24 ]
 }
 
-btnArray = {
-    'rowPins': [10, 11],
-    'colPins': [9, 0, 5, 6, 22, 27, 17, 4],
+led = {
+    'pins': [5,  1, 13,  9, 21, 17, 29, 25, 4, 0, 12, 20, 8, 16, 28, 24]
+}
+button = {
+    'pins': [6, 2, 14, 22, 10, 18, 30, 26, 7, 3, 15, 11, 23, 19, 31, 27],
     'longPressDurationSeconds': 3,
     'pollPeriodSeconds': 0,
 }
 
 lcd = {
-    'expander': "PCF8574",
     'address': 0x27,
-    'port': 1,
     'backlight': True,
 }

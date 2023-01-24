@@ -4,7 +4,6 @@ from config.config import Config
 from utils.logger import logger
 from utils.led import Led
 
-
 class LedArray:
     """
     This is a singleton class meant to abstract away the logic for the LED Array.
@@ -51,7 +50,16 @@ class LedArray:
         Initialize the LEDs by configuring the pins as outputs and setting them to LOW
         """
         logger.debug("Initializing LED array")
-        self.leds = [Led(i, Config().led.pins[i]) for i in range(0, 16)]
+        self.leds = []
+        for pin_index, pin_number in enumerate(Config().led.pins):
+            self.leds.append(
+                Led(
+                    index = pin_index,
+                    expander_id = pin_number // 8,
+                    pin_id = pin_number % 8,
+                )
+            )
+
 
     def __new__(cls):
         """
@@ -61,6 +69,4 @@ class LedArray:
             logger.debug('Created a new LedArray singleton instance')
             cls._instance = object.__new__(cls)
             cls._instance.setup()
-        else:
-            logger.debug('Reused the LedArray singleton instance')
         return cls._instance

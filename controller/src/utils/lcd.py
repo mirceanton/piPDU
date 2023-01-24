@@ -130,9 +130,8 @@ class LCD:
         """
         logger.debug("Initializing LCD object.")
         self.device = CharLCD(
-            i2c_expander = Config().lcd.expander,
+            i2c_expander = 'PCF8574',
             address = Config().lcd.address,
-            port = Config().lcd.port,
             backlight_enabled = Config().lcd.backlight,
         )
 
@@ -152,7 +151,5 @@ class LCD:
             logger.debug('Created a new LCD singleton instance')
             cls._instance = object.__new__(cls)
             cls._instance.setup()
-        else:
-            logger.debug('Reused the LCD singleton instance')
         return cls._instance
 

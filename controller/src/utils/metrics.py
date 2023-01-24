@@ -55,10 +55,10 @@ class Metrics:
         logger.debug(f"Total calculated: {self.total}")
 
     def __new__(cls):
-        """Create a singleton instance of the Metrics class."""
-        if Exporter.__instance is None:
+        """
+        Create/Retrieve the singleton instance
+        """
+        if not hasattr(cls, '_instance'):
             logger.debug('Created a new Metrics singleton instance')
-            Exporter.__instance = object.__new__(cls)
-        else:
-            logger.debug('Reused the Metrics singleton instance')
-        return Exporter.__instance
+            cls._instance = object.__new__(cls)
+        return cls._instance

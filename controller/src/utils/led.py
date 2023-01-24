@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 from utils.logger import logger
+from utils.expanders import expanders
 
 class Led:
     """
@@ -11,8 +12,11 @@ class Led:
     index : int
         The index of the button.
 
-    pin : int
-        The pin number for the LED.
+    expander : PCF8574
+        The PCF8574 device that this LED is connected to
+
+    pin_name : str
+        The name of the pin on the PCF device, as interpreted by the pcf8574_io library
 
     state : bool
         Whether or not the LED is currently on.
@@ -26,7 +30,7 @@ class Led:
     turnOff() -> None:
         Turns the LED off.
     
-    setState(state: bool):
+    setState(state: bool) -> None:
         Sets the LED to the given state.
     """
 
@@ -36,7 +40,7 @@ class Led:
         """
         logger.info(f"Turning LED {self.index} ON")
         self.state = True
-        GPIO.output(self.pin, GPIO.HIGH)
+        self.expander.write(self.pin_name, "LOW")
 
     def turnOff(self) -> None:
         """
@@ -44,7 +48,7 @@ class Led:
         """
         logger.info(f"Turning LED {self.index} OFF")
         self.state = False
-        GPIO.output(self.pin, GPIO.LOW)
+        self.expander.write(self.pin_name, "HIGH")
 
     def setState(self, state: bool):
         """
@@ -59,15 +63,13 @@ class Led:
             return self.turnOn()
         return self.turnOff()
 
-    def __init__(self, index: int, pin: int, state = False):
+    def __init__(self, index: int, expander_id: int, pin_id: int):
         logger.debug(f"Initializing LED {index}")
         self.index = index
-        self.pin = pin
+        self.expander = expanders[expander_id]
+        self.pin_name = f"p{pin_id}"
         self.state = None
 
-        GPIO.setup(pin, GPIO.OUT)
-        logger.info(f"Pin {pin} configured as output")
-        GPIO.output(pin, GPIO.LOW)
-        logger.info(f"Pin {pin} set to LOW")
+        self.expander.pin_mode(self.pin_name, "OUTPUT")
 
-        self.setState(state)
+        self.setState(False)

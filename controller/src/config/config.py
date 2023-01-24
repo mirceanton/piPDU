@@ -24,28 +24,19 @@ class Config(object):
         The frequency at which to poll the metrics endpoint exposed by the server.
 
     led.pins: list
-        The device file name for communicating with the arduino
+        Array containing the the pins used for the LEDs, mapped for the expanders
 
-    btnArray.rowPins: list<int>
-        Array containing the BCM numbers for the pins used for the button matrix rows
+    button.pins: list<int>
+        Array containing the the pins used for the buttons, mapped for the expanders
 
-    btnArray.colPins: list<int>
-        Array containing the BCM numbers for the pins used for the button matrix columns
-
-    btnArray.longPressDurationSeconds: int (default 3)
+    button.longPressDurationSeconds: int (default 3)
         The interval in seconds a button has to be held for it to be considered a long press
 
-    btnArray.pollPeriodSeconds: int (default 0)
+    button.pollPeriodSeconds: int (default 0)
         The interval in seconds between 2 subsequent polls for events on the button matrix
-
-    lcd.expander: str (default PCF8574)
-        The type of I2C expander used for the display
 
     lcd.address: byte (default 0x27)
         The I2C address for the display
-
-    lcd.port: int (default 1)
-        The port used to communicate with the display
 
     lcd.backlight: bool (default True)
         Whether or not to enable the backlight on the display
@@ -83,14 +74,17 @@ class Config(object):
             self.api = SimpleNamespace(**data['api'])
             logger.debug(f'Loaded API configuration: {self.api}')
 
+            self.expanders = SimpleNamespace(**data.get('expanders', defaults.expanders))
+            logger.debug(f'Loaded expanders configuration: {self.expanders}')
+
             self.metrics = SimpleNamespace(**data.get('metrics', defaults.metrics))
             logger.debug(f'Loaded metrics configuration: {self.metrics}')
 
             self.led = SimpleNamespace(**data.get('led', defaults.led))
             logger.debug(f'Loaded LED configuration: {self.led}')
 
-            self.btnArray = SimpleNamespace(**data.get('btnArray', defaults.btnArray))
-            logger.debug(f'Loaded btnArray configuration: {self.btnArray}')
+            self.button = SimpleNamespace(**data.get('button', defaults.button))
+            logger.debug(f'Loaded button configuration: {self.button}')
 
             self.lcd = SimpleNamespace(**data.get('lcd', defaults.lcd))
             logger.debug(f'Loaded LCD configuration: {self.lcd}')
@@ -107,7 +101,5 @@ class Config(object):
             logger.debug('Created a new Config singleton instance')
             cls._instance = object.__new__(cls)
             cls._instance.parse()
-        else:
-            logger.debug('Reused the Config singleton instance')
         return cls._instance
 

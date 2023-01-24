@@ -1,9 +1,11 @@
 from utils.lcd import LCD, LCDStates
 from config.config import Config
 from utils.logger import logger
+from utils.expanders import expanders
 import RPi.GPIO as GPIO
 import datetime
 import requests
+
 
 class Button:
     """
@@ -14,6 +16,12 @@ class Button:
 
     index : int
         The index of the button.
+
+    expander : PCF8574
+        The PCF8574 device that this button is connected to
+
+    pin_name : str
+        The name of the pin on the PCF device, as interpreted by the pcf8574_io library
 
     current_state : bool
         The current state of the button. True means the button is pressed, False means it is not.
@@ -50,19 +58,12 @@ class Button:
         Checks if the amount of time for which the button has been held down is longer than the long press threshold.    
     """
 
-    def poll(self, value: int) -> None:
+    def poll(self) -> None:
         """
         Poll the button for a press event; either a long press or a short press.
-        
-        Parameters:
-        value (int): The current value of the button.
         """
-        logger.debug(f"Updating button {self.index} status.")
         self.old_state = self.current_state
-        logger.debug(f"Button {self.index} old state: {self.old_state}")
-
-        self.current_state = value == GPIO.HIGH
-        logger.debug(f"Button {self.index} current state: {self.current_state}")
+        self.current_state = self.expander.read(self.pin_name)
 
         # If the button has now been pressed, record the time
         if self.is_pressed():
@@ -88,23 +89,22 @@ class Button:
         Execute the action for a short press of the button.
         """
         logger.debug(f"Executing short press action for button {self.index}")
-        LCD().setState(self.index)
+        LCD().set_state(self.index)
 
     def long_press(self) -> None:
         """
         Execute the action for a long press of the button.
         """
         logger.debug(f"Executing long press action for button {self.index}")
-
         logger.debug(f"Sending POST request to {self.url}")
-        resp = requests.post(self.url)
 
+        resp = requests.post(self.url)
         if (resp.status_code != 200):
             logger.warn("Request failed")
             return
         logger.info(f"Request for button {self.index} OK")
         logger.debug(resp)
-        LCD().setState(LCDStates.IDLE)
+        LCD().set_state(LCDStates.IDLE)
 
     def is_pressed(self) -> bool:
         """
@@ -131,9 +131,9 @@ class Button:
         if self.last_press_time is None:
             return False
         time_held = (datetime.datetime.now() - self.last_press_time).total_seconds()
-        return time_held > Config().btnArray.longPressDurationSeconds
+        return time_held > Config().button.longPressDurationSeconds
 
-    def __init__(self, index, current_state=False, old_state=False, time=0):
+    def __init__(self, index:int, expander_id: int, pin_id: int):
         """
         Initialize a Button object with the given index, current state, old state, and time.
         
@@ -145,7 +145,16 @@ class Button:
         """
         logger.debug(f"Initializing button {index}")
         self.index = index
-        self.current_state = current_state
-        self.old_state = old_state
-        self.last_press_time = time
+        self.expander = expanders[expander_id]
+        self.pin_name = f"p{pin_id}"
+        self.current_state = False
+        self.old_state = False
+        self.last_press_time = 0
         self.url = f"http://{Config().api.host}:{Config().api.port}/api/v1/socket/{self.index}/toggle"
+
+        # Initialize the pin by setting it to LOW since it is HIGH by default
+        # and it would mess up the digitalRead method
+        self.expander.pin_mode(self.pin_name, "OUTPUT")
+        self.expander.write(self.pin_name, "LOW")
+
+        self.expander.pin_mode(self.pin_name, "INPUT")
