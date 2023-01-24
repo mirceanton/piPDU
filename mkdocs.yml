@@ -1,0 +1,38 @@
+---
+# =================================================================================================
+# Site Configurations
+# =================================================================================================
+site_name: Pi PDU
+# site_url: https://pipdu.netlify.app
+site_author: Mircea-Pavel Anton
+extra:
+  version: 1.0.0
+
+# =================================================================================================
+# Repo Setup
+# =================================================================================================
+repo_name: mirceanton/piPDU
+repo_url: https://github.com/mirceanton/piPDU
+
+# =================================================================================================
+# Theme Configuration
+# =================================================================================================
+theme:
+  name: material
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  language: en
+  features:
+    - navigation.instant
+    - navigation.expand
+    - navigation.indexes
+    - navigation.top
+    - content.tooltips
+    - search.share
