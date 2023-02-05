@@ -1,3 +1,5 @@
+// Credits: https://github.com/asmshamim/ACS712-Current-Sensor-Library
+
 #ifndef ACS712_h
 #define ACS712_h
 
