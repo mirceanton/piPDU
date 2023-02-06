@@ -17,7 +17,7 @@ const int sensorPins[numSockets] = {A11, A10, A1/*??*/, A7, A6, A2, A14, A15, A5
 ACS712 *sensors[numSockets];
 const int sensorSamples = 500;
 
-void serialThread() {
+void handleMessage() {
   char c = Wire.read();
 
   // If the character is between 'a' and 'p', toggle the corresponding relay
