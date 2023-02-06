@@ -57,7 +57,7 @@ void setup() {
   Serial.println("Starting initialization");
 
   Serial.println("Joining the I2C bus...");
-  Wire.begin();
+  Wire.begin(0x20);
   Serial.println("Setting I2C event handler...");
   Wire.onReceive(handleMessage);
 
