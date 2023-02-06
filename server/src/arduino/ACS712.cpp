@@ -10,6 +10,10 @@ void ACS712::setmVperAmp(int _mVperAmp) {
   mVperAmp = _mVperAmp;
 }
 
+void ACS712::setNoiseFloor(double _noiseFloor) {
+  noiseFloor = _noiseFloor;
+}
+
 void ACS712::pollForMillis(int _millis) {
   int readValue;
   minValue = 1024;
@@ -44,6 +48,7 @@ double ACS712::getCurrent() {
   minValue = 1024;
   maxValue = 0;
 
+  if (IRMS < noiseFloor) return 0;
   return IRMS;
 }
 
