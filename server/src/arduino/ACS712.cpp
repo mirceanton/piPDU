@@ -1,62 +1,44 @@
 #include "ACS712.h"
 
-ACS712::ACS712(ACS712_type type, uint8_t _pin) {
-    pin = _pin;
-
-    // Different models of the sensor have their sensitivity:
-    switch (type) {
-        case ACS712_05B:
-            sensitivity = 0.185;
-            break;
-        case ACS712_20A:
-            sensitivity = 0.100;
-            break;
-        case ACS712_30A:
-            sensitivity = 0.066;
-            break;
-    }
+ACS712::ACS712(int _pin, int _mVperAmp) {
+  pinMode(_pin, INPUT);
+  pin = _pin;
+  mVperAmp = _mVperAmp;
 }
 
-int ACS712::calibrate() {
-    uint16_t acc = 0;
-    for (int i = 0; i < 20; i++) {
-        acc += analogRead(pin);
-        delay(1);
-    }
-    zero = acc / 20;
-    return zero;
+void ACS712::setmVperAmp(int _mVperAmp) {
+  mVperAmp = _mVperAmp;
 }
 
-void ACS712::setZeroPoint(int _zero) {
-    zero = _zero;
+void ACS712::pollForMillis(int _millis) {
+  int readValue;
+  minValue = 1024;
+  maxValue = 0;
+
+  uint32_t start_time = millis();
+  while((millis() - start_time) < _millis) {
+    poll();
+  }
 }
 
-void ACS712::setSensitivity(float sens) {
-    sensitivity = sens;
+void ACS712::poll() {
+  int readValue = analogRead(pin);
+  
+  if (readValue > maxValue) {
+    maxValue = readValue;
+  }
+  if (readValue < minValue) {
+    minValue = readValue;
+  }
 }
 
-float ACS712::getCurrentDC() {
-    int16_t acc = 0;
-    for (int i = 0; i < 10; i++) {
-        acc += analogRead(pin) - zero;
-    }
-    float I = (float)acc / 10.0 / ADC_SCALE * VREF / sensitivity;
-    return I;
-}
+double ACS712::getCurrent() {
+  if (maxValue == 0 && minValue == 1024) {
+    pollForMillis(1000);
+  }
+  double VPP = ((maxValue - minValue) * 5.0) / 1024.0;
+  double VRMS = (VPP / 2.0) * 0.707;
+  double IRMS = (VRMS * 1000) / mVperAmp;
 
-float ACS712::getCurrentAC(uint16_t frequency) {
-    uint32_t period = 1000000 / frequency;
-    uint32_t t_start = micros();
-
-    uint32_t Isum = 0, measurements_count = 0;
-    int32_t Inow;
-
-    while (micros() - t_start < period) {
-        Inow = analogRead(pin) - zero;
-        Isum += Inow*Inow;
-        measurements_count++;
-    }
-
-    float Irms = sqrt(Isum / measurements_count) / ADC_SCALE * VREF / sensitivity;
-    return Irms;
+  return IRMS;
 }
