@@ -20,10 +20,13 @@ const int sensorSamples = 500;
 void handleMessage() {
   if (Wire.available()) {
     char c = Wire.read();
+    Serial.print("Got message from i2c: ");
+    Serial.println(c);
     
     // If the character is 'q', turn OFF all relays
     if (c == 'q') {
       for (int i = 0; i < numSockets; i++) {
+        Serial.println("Turning off all relays...");
         relays[i]->off();
         return;
       }
@@ -32,6 +35,7 @@ void handleMessage() {
     // If the character is 'r', turn ON all relays
     if (c == 'r') {
       for (int i = 0; i < numSockets; i++) {
+        Serial.println("Turning on all relays...");
         relays[i]->on();
         return;
       }
@@ -39,6 +43,8 @@ void handleMessage() {
 
     // If the character is between 'a' and 'p', toggle the corresponding relay
     if (c >= 'a' && c <= 'p') {
+      Serial.print("Toggling relay ");
+      Serial.println(c-'a');
       relays[ c - 'a' ]->toggle();
     }
   }
@@ -48,17 +54,27 @@ void handleMessage() {
 void setup() {
   // Initiate serial communication
   Serial.begin(9600);
+  Serial.println("Starting initialization");
 
-  // Join the i2c bus and register an event handler
+  Serial.println("Joining the I2C bus...");
   Wire.begin();
+  Serial.println("Setting I2C event handler...");
   Wire.onReceive(handleMessage);
 
-  // Initialize devices
+  Serial.println("Setting devices...");
   for (int i = 0; i < numSockets; i++) {
     relays[i] = new Relay(relayPins[i], true);
     sensors[i] = new ACS712(sensorPins[i], 145);
     sensors[i]->setNoiseFloor(0.1);
   }
+  
+  Serial.println("Starting to print sensor readings: ");
+  for (int i = 0; i < numSockets; i++) {
+    Serial.print("| S");
+    Serial.print( i+1 );
+    Serial.print("\t|");
+  }
+  Serial.print("\r\n");
 }
 
 void loop() {
@@ -69,8 +85,9 @@ void loop() {
   }
 
   for (int i = 0; i < numSockets; i++) {
+    Serial.print("| ");
     Serial.print( sensors[i]->getWatts() );
-    if (i < numSockets -1) Serial.print(",");
+    Serial.print("\t");
   }
   Serial.print("\r\n");
 }
