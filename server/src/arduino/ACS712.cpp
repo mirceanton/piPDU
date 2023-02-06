@@ -46,3 +46,7 @@ double ACS712::getCurrent() {
 
   return IRMS;
 }
+
+int ACS712::getRaw() {
+  return analogRead(pin);
+}

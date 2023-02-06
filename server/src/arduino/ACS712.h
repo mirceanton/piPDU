@@ -11,6 +11,7 @@ class ACS712 {
     void pollForMillis(int _millis);
     void poll();
     double getCurrent();
+    int getRaw();
 private:
   int pin;
   int mVperAmp;
