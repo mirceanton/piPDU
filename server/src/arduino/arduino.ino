@@ -1,3 +1,4 @@
+#include <Wire.h>
 #include "Relay.h"
 #include "ACS712.h"
 
@@ -17,33 +18,47 @@ ACS712 *sensors[numSockets];
 const int sensorSamples = 500;
 
 void serialThread() {
-  // Check if there are any characters available on the serial connection
-  if (Serial.available() > 0) {
-    char c = Serial.read();
+  char c = Wire.read();
 
-    // If the character is between 'a' and 'p', toggle the corresponding relay
-    if (c >= 'a' && c <= 'p') {
-      int relayNumber = c - 'a'; // Calculate the relay number
-      relays[relayNumber]->toggle();
+  // If the character is between 'a' and 'p', toggle the corresponding relay
+  if (c >= 'a' && c <= 'p') {
+    int relayNumber = c - 'a'; // Calculate the relay number
+    relays[relayNumber]->toggle();
+  }
+  
+  // If the character is 'q', turn OFF all relays
+  if (c == 'q') {
+    for (int i = 0; i < numSockets; i++) {
+      relays[i]->off();
     }
-    
-    // If the character is 'q', turn OFF all relays
-    if (c == 'q') {
-      for (int i = 0; i < numSockets; i++) {
-        relays[i]->off();
-      }
-    }
-    
-    // If the character is 'r', turn ON all relays
-    if (c == 'r') {
-      for (int i = 0; i < numSockets; i++) {
-        relays[i]->on();
-      }
+  }
+  
+  // If the character is 'r', turn ON all relays
+  if (c == 'r') {
+    for (int i = 0; i < numSockets; i++) {
+      relays[i]->on();
     }
   }
 }
 
-void metricsThread() {
+
+void setup() {
+  // Initiate serial communication
+  Serial.begin(9600);
+
+  // Join the i2c bus and register an event handler
+  Wire.begin(0x08);
+  Wire.onReceive(handleMessage);
+
+  // Initialize devices
+  for (int i = 0; i < numSockets; i++) {
+    relays[i] = new Relay(relayPins[i], true);
+    sensors[i] = new ACS712(sensorPins[i], 145);
+    sensors[i]->setNoiseFloor(0.1);
+  }
+}
+
+void loop() {
   for (int i = 0; i < sensorSamples; i++) {
     for (int j = 0; j < numSockets; j++) {
       sensors[j]->poll();
@@ -55,23 +70,4 @@ void metricsThread() {
     if (i < numSockets -1) Serial.print(",");
   }
   Serial.print("\r\n");
-}
-
-// ================================================================================================
-// MAIN FUNCTIONS
-// ================================================================================================
-void setup() {
-  // Initiate serial communication
-  Serial.begin(9600);
-
-  for (int i = 0; i < numSockets; i++) {
-    relays[i] = new Relay(relayPins[i], true);
-    sensors[i] = new ACS712(sensorPins[i], 145);
-    sensors[i]->setNoiseFloor(0.1);
-  }
-}
-
-void loop() {
-  metricsThread();
-  serialThread();
 }
