@@ -6,7 +6,7 @@ const int numSockets = 16;
 // ================================================================================================
 // RELAY VARIABLES
 // ================================================================================================
-const int relayPins[numSockets] ={41, 42, 44, 49, 50, 52, 38, 43, 46, 51, 39, 40, 45, 47, 48, 53};
+const int relayPins[numSockets] = {41, 42, 44, 49, 50, 52, 38, 43, 46, 51, 39, 40, 45, 47, 48, 53};
 Relay *relays[numSockets];
 
 // ================================================================================================
@@ -14,14 +14,11 @@ Relay *relays[numSockets];
 // ================================================================================================
 const int sensorPins[numSockets] = {A11, A10, A1/*??*/, A7, A6, A2, A14, A15, A5, A0, A9, A12, A13, A3, A4, A1};
 ACS712 *sensors[numSockets];
-const int mVperAmp[numSockets] = {145, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145};
-const int noiseLevel[numSockets] = {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8};
 const int sensorSamples = 500;
 
-void serialThread() { // FIXME
+void serialThread() {
   // Check if there are any characters available on the serial connection
   if (Serial.available() > 0) {
-    // Read the next available character
     char c = Serial.read();
 
     // If the character is between 'a' and 'p', toggle the corresponding relay
@@ -54,16 +51,11 @@ void metricsThread() {
   }
 
   for (int i = 0; i < numSockets; i++) {
-    Serial.print("s");
-    Serial.print(i);
-    Serial.print(":");
-    Serial.print( sensors[i]->getCurrent() );
-    if (i < numSockets - 1) {
-      Serial.print("\t");
-    }
+    Serial.print("| ");
+    Serial.print( sensors[i]->getWatts() );
+    Serial.print("\t");
   }
-
-  Serial.print("\r\n");
+  Serial.println("|");
 }
 
 // ================================================================================================
@@ -75,8 +67,16 @@ void setup() {
 
   for (int i = 0; i < numSockets; i++) {
     relays[i] = new Relay(relayPins[i], true);
-    sensors[i] = new ACS712(sensorPins[i], mVperAmp[i]);
+    sensors[i] = new ACS712(sensorPins[i], 145);
+    sensors[i]->setNoiseFloor(0.1);
   }
+  
+  for (int i = 0; i < numSockets; i++) {
+    Serial.print("| S");
+    Serial.print(i);
+    Serial.print("\t");
+  }
+  Serial.println("|");
 }
 
 void loop() {
