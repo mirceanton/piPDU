@@ -42,10 +42,10 @@ class SocketArray:
                 id = i,
                 name = sck.get('name', None),
                 initState = sck.get('initState', "True") == "True",
-                prePowerOnHook = sck.get('prePowerOnHook', {})
-                postPowerOnHook = sck.get('postPowerOnHook', {})
-                prePowerOffHook = sck.get('prePowerOffHook', {})
-                postPowerOffHook = sck.get('postPowerOffHook', {})
+                prePowerOnHook = sck.get('prePowerOnHook', {}),
+                postPowerOnHook = sck.get('postPowerOnHook', {}),
+                prePowerOffHook = sck.get('prePowerOffHook', {}),
+                postPowerOffHook = sck.get('postPowerOffHook', {}),
             ))
 
     def __new__(cls):
