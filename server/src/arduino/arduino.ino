@@ -18,25 +18,28 @@ ACS712 *sensors[numSockets];
 const int sensorSamples = 500;
 
 void handleMessage() {
-  char c = Wire.read();
-
-  // If the character is between 'a' and 'p', toggle the corresponding relay
-  if (c >= 'a' && c <= 'p') {
-    int relayNumber = c - 'a'; // Calculate the relay number
-    relays[relayNumber]->toggle();
-  }
-  
-  // If the character is 'q', turn OFF all relays
-  if (c == 'q') {
-    for (int i = 0; i < numSockets; i++) {
-      relays[i]->off();
+  if (Wire.available()) {
+    char c = Wire.read();
+    
+    // If the character is 'q', turn OFF all relays
+    if (c == 'q') {
+      for (int i = 0; i < numSockets; i++) {
+        relays[i]->off();
+        return;
+      }
     }
-  }
-  
-  // If the character is 'r', turn ON all relays
-  if (c == 'r') {
-    for (int i = 0; i < numSockets; i++) {
-      relays[i]->on();
+    
+    // If the character is 'r', turn ON all relays
+    if (c == 'r') {
+      for (int i = 0; i < numSockets; i++) {
+        relays[i]->on();
+        return;
+      }
+    }
+
+    // If the character is between 'a' and 'p', toggle the corresponding relay
+    if (c >= 'a' && c <= 'p') {
+      relays[ c - 'a' ]->toggle();
     }
   }
 }
@@ -47,7 +50,7 @@ void setup() {
   Serial.begin(9600);
 
   // Join the i2c bus and register an event handler
-  Wire.begin(0x08);
+  Wire.begin();
   Wire.onReceive(handleMessage);
 
   // Initialize devices
