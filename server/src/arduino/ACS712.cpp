@@ -36,7 +36,7 @@ void ACS712::poll() {
   }
 }
 
-double ACS712::getCurrent() {
+double ACS712::getAmps() {
   if (maxValue == 0 && minValue == 1024) {
     pollForMillis(1000);
   }

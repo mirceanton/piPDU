@@ -13,7 +13,7 @@ class ACS712 {
     void pollForMillis(int _millis);
     void poll();
 
-    double getCurrent();
+    double getAmps();
     int getRaw();
 
   private:
