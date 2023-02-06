@@ -25,17 +25,11 @@ Relay::Relay(int _pin, int onSignal, int offSignal, bool defaultState) {
 }
 
 void Relay::on() {
-  Serial.print("Turning on relay ");
-  Serial.println(pin);
-
   digitalWrite(pin, ON);
   state = true;
 }
 
 void Relay::off() {
-  Serial.print("Turning off relay ");
-  Serial.println(pin);
-
   digitalWrite(pin, OFF);
   state = false;
 }
