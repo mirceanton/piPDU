@@ -52,6 +52,10 @@ double ACS712::getAmps() {
   return IRMS;
 }
 
+double ACS712::getWatts() {
+  return getAmps() * 230;
+}
+
 int ACS712::getRaw() {
   return analogRead(pin);
 }

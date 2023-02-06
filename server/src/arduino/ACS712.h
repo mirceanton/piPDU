@@ -14,6 +14,7 @@ class ACS712 {
     void poll();
 
     double getAmps();
+    double getWatts();
     int getRaw();
 
   private:
