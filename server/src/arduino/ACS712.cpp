@@ -40,5 +40,9 @@ double ACS712::getCurrent() {
   double VRMS = (VPP / 2.0) * 0.707;
   double IRMS = (VRMS * 1000) / mVperAmp;
 
+  // Reset values
+  minValue = 1024;
+  maxValue = 0;
+
   return IRMS;
 }
