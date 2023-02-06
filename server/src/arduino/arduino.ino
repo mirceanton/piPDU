@@ -54,6 +54,7 @@ void metricsThread() {
     Serial.print( sensors[i]->getWatts() );
     if (i < numSockets -1) Serial.print(",");
   }
+  Serial.print("\r\n");
 }
 
 // ================================================================================================
