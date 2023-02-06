@@ -51,11 +51,9 @@ void metricsThread() {
   }
 
   for (int i = 0; i < numSockets; i++) {
-    Serial.print("| ");
     Serial.print( sensors[i]->getWatts() );
-    Serial.print("\t");
+    if (i < numSockets -1) Serial.print(",");
   }
-  Serial.println("|");
 }
 
 // ================================================================================================
@@ -70,13 +68,6 @@ void setup() {
     sensors[i] = new ACS712(sensorPins[i], 145);
     sensors[i]->setNoiseFloor(0.1);
   }
-  
-  for (int i = 0; i < numSockets; i++) {
-    Serial.print("| S");
-    Serial.print(i);
-    Serial.print("\t");
-  }
-  Serial.println("|");
 }
 
 void loop() {
