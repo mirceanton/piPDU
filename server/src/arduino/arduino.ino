@@ -21,8 +21,7 @@ void handleMessage() {
   if (!Wire.available()) return;
 
   char c = Wire.read();
-  Serial.print("Got message from i2c: ");
-  Serial.println(c);
+  Serial.println("Got message from i2c: " + String(message));
   
   // If the character is 'q', turn OFF all relays
   if (c == 'q') {
@@ -42,12 +41,14 @@ void handleMessage() {
     return;
   }
 
-  // If the character is between 'a' and 'p', toggle the corresponding relay
-  if (c >= 'a' && c <= 'p') {
-    Serial.print("Toggling relay ");
-    Serial.println(c-'a');
-    relays[ c - 'a' ]->toggle();
+  int relayId = (message - 'a');
+  if (0 <= relayId && relayId < 16) {
+    Serial.println("Toggling relay " + String(relayId));
+    relays[relayId]->toggle();
+    return;
   }
+
+  Serial.println("Invalid relay ID: " + String(relayId) + " (" + message + ")");
 }
 
 
