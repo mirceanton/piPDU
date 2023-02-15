@@ -13,9 +13,8 @@ Relay *relays[numSockets];
 // ================================================================================================
 // SENSOR VARIABLES
 // ================================================================================================
-const int sensorPins[numSockets] = {A11, A10, A1/*??*/, A7, A6, A2, A14, A15, A5, A0, A9, A12, A13, A3, A4, A1};
+const int sensorPins[numSockets] = {A11, A10, A1, A7, A6, A2, A14, A15, A5, A0, A9, A12, A13, A3, A4, A1};
 ACS712 *sensors[numSockets];
-const int sensorSamples = 500;
 
 void onReceiveHandler() {
   if (!Wire.available()) return;
@@ -49,6 +48,19 @@ void onReceiveHandler() {
   Serial.println("Invalid relay ID: " + String(relayId) + " (" + message + ")");
 }
 
+void onRequestHandler() {
+  String message = "";
+  for (int i = 0; i < numSockets; i++) {
+    message += String(sensors[i]->getAmps());
+    message += ",";
+  }
+  message += "\n";
+
+  char buffer[1024];
+  message.toCharArray(buffer, message.length());
+  Wire.write(buffer);
+  Serial.println(buffer);
+}
 
 void setup() {
   Serial.begin(9600);
@@ -56,8 +68,9 @@ void setup() {
 
   Serial.println("Joining the I2C bus...");
   Wire.begin(0x20);
-  Serial.println("Setting I2C event handler...");
+  Serial.println("Setting I2C event handlers...");
   Wire.onReceive(onReceiveHandler);
+  Wire.onRequest(onRequestHandler);
 
   Serial.println("Setting devices...");
   for (int i = 0; i < numSockets; i++) {
@@ -68,16 +81,7 @@ void setup() {
 }
 
 void loop() {
-  for (int i = 0; i < sensorSamples; i++) {
-    for (int j = 0; j < numSockets; j++) {
-      sensors[j]->poll();
-    }
+  for (int j = 0; j < numSockets; j++) {
+    sensors[j]->poll();
   }
-
-  for (int i = 0; i < numSockets; i++) {
-    Serial.print("| ");
-    Serial.print( sensors[i]->getWatts() );
-    Serial.print("\t");
-  }
-  Serial.print("\r\n");
 }
