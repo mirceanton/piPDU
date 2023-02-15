@@ -78,6 +78,9 @@ void setup() {
     sensors[i] = new ACS712(sensorPins[i], 145);
     sensors[i]->setNoiseFloor(0.1);
   }
+
+  Serial.println("Initialization done.");
+  Serial.println("Sensor polling started.");
 }
 
 void loop() {
