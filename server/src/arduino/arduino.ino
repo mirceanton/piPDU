@@ -20,11 +20,11 @@ const int sensorSamples = 500;
 void handleMessage() {
   if (!Wire.available()) return;
 
-  char c = Wire.read();
+  const char message = Wire.read();
   Serial.println("Got message from i2c: " + String(message));
   
   // If the character is 'q', turn OFF all relays
-  if (c == 'q') {
+  if (message == 'q') {
     Serial.println("Turning off all relays...");
     for (int i = 0; i < numSockets; i++) {
       relays[i]->off();
@@ -33,7 +33,7 @@ void handleMessage() {
   }
   
   // If the character is 'r', turn ON all relays
-  if (c == 'r') {
+  if (message == 'r') {
     Serial.println("Turning on all relays...");
     for (int i = 0; i < numSockets; i++) {
       relays[i]->on();
