@@ -25,20 +25,20 @@ void handleMessage() {
     
     // If the character is 'q', turn OFF all relays
     if (c == 'q') {
+      Serial.println("Turning off all relays...");
       for (int i = 0; i < numSockets; i++) {
-        Serial.println("Turning off all relays...");
         relays[i]->off();
-        return;
       }
+      return;
     }
     
     // If the character is 'r', turn ON all relays
     if (c == 'r') {
+      Serial.println("Turning on all relays...");
       for (int i = 0; i < numSockets; i++) {
-        Serial.println("Turning on all relays...");
         relays[i]->on();
-        return;
       }
+      return;
     }
 
     // If the character is between 'a' and 'p', toggle the corresponding relay
