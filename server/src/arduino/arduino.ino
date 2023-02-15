@@ -1,8 +1,8 @@
-#include <Wire.h>
 #include "Relay.h"
 #include "ACS712.h"
 
 const int numSockets = 16;
+unsigned long time;
 
 // ================================================================================================
 // RELAY VARIABLES
@@ -16,14 +16,36 @@ Relay *relays[numSockets];
 const int sensorPins[numSockets] = {A11, A10, A1, A7, A6, A2, A14, A15, A5, A0, A9, A12, A13, A3, A4, A1};
 ACS712 *sensors[numSockets];
 
-void onReceiveHandler() {
-  if (!Wire.available()) return;
+void setup() {
+  Serial.begin(9600);
 
-  const char message = Wire.read();
-  Serial.println("Got message from i2c: " + String(message));
+  for (int i = 0; i < numSockets; i++) {
+    relays[i] = new Relay(relayPins[i], true);
+    sensors[i] = new ACS712(sensorPins[i], 145);
+    sensors[i]->setNoiseFloor(0.1);
+  }
+}
+
+void loop() {
+  for(int i = 0; i < 500; i++) {
+    for (int j = 0; j < numSockets; j++) {
+      sensors[j]->poll();
+    }
+  }
+
+  String message = "";
+  for (int i = 0; i < numSockets; i++) {
+    message += String(sensors[i]->getAmps()) + " ";
+  }
+  Serial.println(message);
+}
+
+void serialEvent() {
+  if (Serial.available() <= 0) return;
+
+  const char message = Serial.read();
 
   if (message == 'q') {
-    Serial.println("Turning off all relays...");
     for (int i = 0; i < numSockets; i++) {
       relays[i]->off();
     }
@@ -31,7 +53,6 @@ void onReceiveHandler() {
   }
 
   if (message == 'r') {
-    Serial.println("Turning on all relays...");
     for (int i = 0; i < numSockets; i++) {
       relays[i]->on();
     }
@@ -40,51 +61,7 @@ void onReceiveHandler() {
 
   const int relayId = (message - 'a');
   if (0 <= relayId && relayId < 16) {
-    Serial.println("Toggling relay " + String(relayId));
     relays[relayId]->toggle();
     return;
-  }
-
-  Serial.println("Invalid relay ID: " + String(relayId) + " (" + message + ")");
-}
-
-void onRequestHandler() {
-  String message = "";
-  for (int i = 0; i < numSockets; i++) {
-    message += String(sensors[i]->getAmps());
-    message += ",";
-  }
-  message += "\n";
-
-  char buffer[1024];
-  message.toCharArray(buffer, message.length());
-  Wire.write(buffer);
-  Serial.println(buffer);
-}
-
-void setup() {
-  Serial.begin(9600);
-  Serial.println("Starting initialization");
-
-  Serial.println("Joining the I2C bus...");
-  Wire.begin(0x20);
-  Serial.println("Setting I2C event handlers...");
-  Wire.onReceive(onReceiveHandler);
-  Wire.onRequest(onRequestHandler);
-
-  Serial.println("Setting devices...");
-  for (int i = 0; i < numSockets; i++) {
-    relays[i] = new Relay(relayPins[i], true);
-    sensors[i] = new ACS712(sensorPins[i], 145);
-    sensors[i]->setNoiseFloor(0.1);
-  }
-
-  Serial.println("Initialization done.");
-  Serial.println("Sensor polling started.");
-}
-
-void loop() {
-  for (int j = 0; j < numSockets; j++) {
-    sensors[j]->poll();
   }
 }
