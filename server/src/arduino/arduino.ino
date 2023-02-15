@@ -18,35 +18,35 @@ ACS712 *sensors[numSockets];
 const int sensorSamples = 500;
 
 void handleMessage() {
-  if (Wire.available()) {
-    char c = Wire.read();
-    Serial.print("Got message from i2c: ");
-    Serial.println(c);
-    
-    // If the character is 'q', turn OFF all relays
-    if (c == 'q') {
-      Serial.println("Turning off all relays...");
-      for (int i = 0; i < numSockets; i++) {
-        relays[i]->off();
-      }
-      return;
-    }
-    
-    // If the character is 'r', turn ON all relays
-    if (c == 'r') {
-      Serial.println("Turning on all relays...");
-      for (int i = 0; i < numSockets; i++) {
-        relays[i]->on();
-      }
-      return;
-    }
+  if (!Wire.available()) return;
 
-    // If the character is between 'a' and 'p', toggle the corresponding relay
-    if (c >= 'a' && c <= 'p') {
-      Serial.print("Toggling relay ");
-      Serial.println(c-'a');
-      relays[ c - 'a' ]->toggle();
+  char c = Wire.read();
+  Serial.print("Got message from i2c: ");
+  Serial.println(c);
+  
+  // If the character is 'q', turn OFF all relays
+  if (c == 'q') {
+    Serial.println("Turning off all relays...");
+    for (int i = 0; i < numSockets; i++) {
+      relays[i]->off();
     }
+    return;
+  }
+  
+  // If the character is 'r', turn ON all relays
+  if (c == 'r') {
+    Serial.println("Turning on all relays...");
+    for (int i = 0; i < numSockets; i++) {
+      relays[i]->on();
+    }
+    return;
+  }
+
+  // If the character is between 'a' and 'p', toggle the corresponding relay
+  if (c >= 'a' && c <= 'p') {
+    Serial.print("Toggling relay ");
+    Serial.println(c-'a');
+    relays[ c - 'a' ]->toggle();
   }
 }
 
