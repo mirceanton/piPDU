@@ -22,7 +22,7 @@ void handleMessage() {
 
   const char message = Wire.read();
   Serial.println("Got message from i2c: " + String(message));
-  
+
   if (message == 'q') {
     Serial.println("Turning off all relays...");
     for (int i = 0; i < numSockets; i++) {
@@ -30,7 +30,7 @@ void handleMessage() {
     }
     return;
   }
-  
+
   if (message == 'r') {
     Serial.println("Turning on all relays...");
     for (int i = 0; i < numSockets; i++) {
@@ -51,7 +51,6 @@ void handleMessage() {
 
 
 void setup() {
-  // Initiate serial communication
   Serial.begin(9600);
   Serial.println("Starting initialization");
 
@@ -66,14 +65,6 @@ void setup() {
     sensors[i] = new ACS712(sensorPins[i], 145);
     sensors[i]->setNoiseFloor(0.1);
   }
-  
-  Serial.println("Starting to print sensor readings: ");
-  for (int i = 0; i < numSockets; i++) {
-    Serial.print("| S");
-    Serial.print( i+1 );
-    Serial.print("\t|");
-  }
-  Serial.print("\r\n");
 }
 
 void loop() {
