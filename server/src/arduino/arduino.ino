@@ -39,7 +39,7 @@ void handleMessage() {
     return;
   }
 
-  int relayId = (message - 'a');
+  const int relayId = (message - 'a');
   if (0 <= relayId && relayId < 16) {
     Serial.println("Toggling relay " + String(relayId));
     relays[relayId]->toggle();
