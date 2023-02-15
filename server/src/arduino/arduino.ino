@@ -17,7 +17,7 @@ const int sensorPins[numSockets] = {A11, A10, A1/*??*/, A7, A6, A2, A14, A15, A5
 ACS712 *sensors[numSockets];
 const int sensorSamples = 500;
 
-void handleMessage() {
+void onReceiveHandler() {
   if (!Wire.available()) return;
 
   const char message = Wire.read();
@@ -57,7 +57,7 @@ void setup() {
   Serial.println("Joining the I2C bus...");
   Wire.begin(0x20);
   Serial.println("Setting I2C event handler...");
-  Wire.onReceive(handleMessage);
+  Wire.onReceive(onReceiveHandler);
 
   Serial.println("Setting devices...");
   for (int i = 0; i < numSockets; i++) {
