@@ -15,9 +15,14 @@ credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASS)
 parameters = pika.ConnectionParameters(RABBITMQ_HOST, RABBITMQ_PORT, RABBITMQ_PATH, credentials)
 
 # Create a RabbitMQ connection and channel, and declare the queue
-connection = pika.BlockingConnection(parameters)
-channel = connection.channel()
-channel.queue_declare(queue=RABBITMQ_QUEUE)
+try:
+    connection = pika.BlockingConnection(parameters)
+    print('INFO: Connection established to RabbitMQ')
+    channel = connection.channel()
+    channel.queue_declare(queue=RABBITMQ_QUEUE)
+    print('INFO: RabbitMQ queue declared')
+except pika.exceptions.AMQPConnectionError:
+    print('ERROR: Could not connect to RabbitMQ. Check your connection settings.')
 
 # Create the list for the prometheus gauges 
 gauges = []
@@ -53,4 +58,7 @@ try:
     channel.start_consuming()
 except KeyboardInterrupt:
     # Gracefully close the connection with the RabbitMQ server
+    print(f'INFO: Closing the RabbitMQ Connection.')
     connection.close()
+except Exception as e:
+    print(f'ERROR: An unexpected error occurred: {e}')

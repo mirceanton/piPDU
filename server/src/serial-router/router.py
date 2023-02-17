@@ -7,6 +7,10 @@ import json
 SERIAL_DEVICE = os.environ['SERIAL_DEVICE']
 BAUD_RATE = int(os.environ['BAUD_RATE'])
 
+# Initialize the serial connection
+ser = serial.Serial(SERIAL_DEVICE, BAUD_RATE)
+print("INFO: Serial connection initialized")
+
 # Get RabbitMQ credentials from environment variables
 RABBITMQ_HOST = os.environ['RABBITMQ_HOST']
 RABBITMQ_PORT = os.environ['RABBITMQ_PORT']
@@ -18,22 +22,22 @@ RABBITMQ_PASS = os.environ['RABBITMQ_PASS']
 credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASS)
 parameters = pika.ConnectionParameters(RABBITMQ_HOST, RABBITMQ_PORT, RABBITMQ_PATH, credentials)
 
-# Create a RabbitMQ connection and channel
-connection = pika.BlockingConnection(parameters)
-channel = connection.channel()
-
-# Declare the queues
-channel.queue_declare(queue='commands')
-channel.queue_declare(queue='metrics')
-
-# Initialize the serial connection
-ser = serial.Serial(SERIAL_DEVICE, BAUD_RATE)
+# Create a RabbitMQ connection and channel, and declare the queue
+try:
+    connection = pika.BlockingConnection(parameters)
+    print('INFO: Connection established to RabbitMQ')
+    channel = connection.channel()
+    channel.queue_declare(queue='commands')
+    channel.queue_declare(queue='metrics')
+    print('INFO: RabbitMQ queues declared')
+except pika.exceptions.AMQPConnectionError:
+    print('ERROR: Could not connect to RabbitMQ. Check your connection settings.')
 
 # Listen to messages from the "api_to_router" queue and forward them to the Arduino over serial
 def queue_message_callback(ch, method, properties, body):
     data = json.loads(body.decode('utf-8'))
-    print(data)
-    
+    print(f'INFO: Got message from queue: {data}')
+
     command = data['payload']['command']
     args = data['payload']['args']
 
@@ -41,22 +45,25 @@ def queue_message_callback(ch, method, properties, body):
         if (ser.in_waiting > 0):
             message = ser.readline().decode('utf-8').rstrip()
             ser.flush()
+            print(f'INFO: Got message from serial: {message}')
+
             channel.basic_publish(
                   exchange='',
                   routing_key='metrics',
                   body=message
             )
-            print(message)
+            print(f'INFO: Message enqueued')
         return
 
     if (command == "socket"):
         cmd = 'A' if args['state'] else 'a'
         cmd = chr(ord(cmd) + args['id'])
-        print(cmd)
+
         ser.write(bytes(cmd, 'utf-8'))
+        print(f'INFO: Sent message over serial: {cmd}')
         return
 
-    print("invalid command")
+    print(f'ERROR: Invalid command {command}')
 
 channel.basic_consume(
     queue='commands',
@@ -67,8 +74,12 @@ channel.basic_consume(
 )
 
 try:
-    # Start consuming messages
+    print('INFO: Serial Router is listening for messages in the commands queue...')
     channel.start_consuming()
 except KeyboardInterrupt:
+    print(f'INFO: Closing the RabbitMQ Connection.')
     connection.close()
+    print(f'INFO: Closing the serial connection.')
     ser.close()
+except Exception as e:
+    print(f'ERROR: An unexpected error occurred: {e}')

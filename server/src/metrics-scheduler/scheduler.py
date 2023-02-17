@@ -11,17 +11,22 @@ RABBITMQ_USER = os.environ['RABBITMQ_USER']
 RABBITMQ_PASS = os.environ['RABBITMQ_PASS']
 RABBITMQ_QUEUE = "commands"
 
-# Establish a connection with the RabbitMQ server
+# RabbitMQ connection parameters
 credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASS)
 parameters = pika.ConnectionParameters(RABBITMQ_HOST, RABBITMQ_PORT, RABBITMQ_PATH, credentials)
-connection = pika.BlockingConnection(parameters)
-channel = connection.channel()
 
-# Declare the queue if it doesn't already exist
-channel.queue_declare(queue=RABBITMQ_QUEUE)
-
-# Main program loop
+# Create a RabbitMQ connection and channel, and declare the queue
 try:
+    connection = pika.BlockingConnection(parameters)
+    print('INFO: Connection established to RabbitMQ')
+    channel = connection.channel()
+    channel.queue_declare(queue=RABBITMQ_QUEUE)
+    print('INFO: RabbitMQ queue declared')
+except pika.exceptions.AMQPConnectionError:
+    print('ERROR: Could not connect to RabbitMQ. Check your connection settings.')
+
+try:
+    print('INFO: Metrics scheduler is starting...')
     while True:
         # Build the message to be sent
         message = json.dumps({
@@ -41,4 +46,7 @@ try:
         time.sleep(0.25)
 except KeyboardInterrupt:
     # Gracefully close the connection with the RabbitMQ server
+    print(f'INFO: Closing the RabbitMQ Connection.')
     connection.close()
+except Exception as e:
+    print(f'ERROR: An unexpected error occurred: {e}')
