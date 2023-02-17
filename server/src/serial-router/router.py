@@ -17,6 +17,8 @@ RABBITMQ_PORT = os.environ['RABBITMQ_PORT']
 RABBITMQ_PATH = os.environ['RABBITMQ_PATH']
 RABBITMQ_USER = os.environ['RABBITMQ_USER']
 RABBITMQ_PASS = os.environ['RABBITMQ_PASS']
+RABBITMQ_METRICS_QUEUE = 'metrics'
+RABBITMQ_COMMANDS_QUEUE = 'commands'
 
 # RabbitMQ connection parameters
 credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASS)
@@ -27,8 +29,8 @@ try:
     connection = pika.BlockingConnection(parameters)
     print('INFO: Connection established to RabbitMQ')
     channel = connection.channel()
-    channel.queue_declare(queue='commands')
-    channel.queue_declare(queue='metrics')
+    channel.queue_declare(queue=RABBITMQ_COMMANDS_QUEUE)
+    channel.queue_declare(queue=RABBITMQ_METRICS_QUEUE)
     print('INFO: RabbitMQ queues declared')
 except pika.exceptions.AMQPConnectionError:
     print('ERROR: Could not connect to RabbitMQ. Check your connection settings.')
@@ -49,7 +51,7 @@ def queue_message_callback(ch, method, properties, body):
 
             channel.basic_publish(
                   exchange='',
-                  routing_key='metrics',
+                  routing_key=RABBITMQ_METRICS_QUEUE,
                   body=message
             )
             print(f'INFO: Message enqueued')
@@ -66,7 +68,7 @@ def queue_message_callback(ch, method, properties, body):
     print(f'ERROR: Invalid command {command}')
 
 channel.basic_consume(
-    queue='commands',
+    queue=RABBITMQ_COMMANDS_QUEUE,
     on_message_callback=queue_message_callback,
     auto_ack=True,
     exclusive=True,
@@ -74,7 +76,7 @@ channel.basic_consume(
 )
 
 try:
-    print('INFO: Serial Router is listening for messages in the commands queue...')
+    print(f'INFO: Serial Router is listening for messages in the {RABBITMQ_COMMANDS_QUEUE} queue...')
     channel.start_consuming()
 except KeyboardInterrupt:
     print(f'INFO: Closing the RabbitMQ Connection.')

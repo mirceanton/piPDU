@@ -54,7 +54,7 @@ channel.basic_consume(
 )
 
 try:
-    print('INFO: Metrics server is listening for messages on the metrics queue...')
+    print(f'INFO: Metrics server is listening for messages on the {RABBITMQ_QUEUE} queue...')
     channel.start_consuming()
 except KeyboardInterrupt:
     # Gracefully close the connection with the RabbitMQ server
