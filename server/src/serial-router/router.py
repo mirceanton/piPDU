@@ -5,7 +5,7 @@ import json
 
 # Get the serial device and baud rate from environment variables
 SERIAL_DEVICE = os.environ['SERIAL_DEVICE']
-BAUD_RATE = int(os.environ['BAUD_RATE'])
+BAUD_RATE = int(os.environ['SERIAL_BAUDRATE'])
 
 # Initialize the serial connection
 ser = serial.Serial(SERIAL_DEVICE, BAUD_RATE)
@@ -34,6 +34,7 @@ try:
     print('INFO: RabbitMQ queues declared')
 except pika.exceptions.AMQPConnectionError:
     print('ERROR: Could not connect to RabbitMQ. Check your connection settings.')
+    exit(1)
 
 # Listen to messages from the "api_to_router" queue and forward them to the Arduino over serial
 def queue_message_callback(ch, method, properties, body):

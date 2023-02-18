@@ -23,6 +23,7 @@ try:
     print('INFO: RabbitMQ queue declared')
 except pika.exceptions.AMQPConnectionError:
     print('ERROR: Could not connect to RabbitMQ. Check your connection settings.')
+    exit(1)
 
 # Create the list for the prometheus gauges 
 gauges = []
