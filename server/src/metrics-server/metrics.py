@@ -28,7 +28,7 @@ except pika.exceptions.AMQPConnectionError:
 # Create the list for the prometheus gauges 
 gauges = []
 for i in range(16):
-    gauge = Gauge(f'socket_{i}', f'Socket {i}', ['Amps'])
+    gauge = Gauge(f'socket_{i}', f'Socket {i} current in amps', ['unit'])
     gauges.append(gauge)
 
 # Start the metrics server
@@ -44,8 +44,7 @@ def queue_message_callback(ch, method, properties, body):
 
     # Update the gauges with the new values
     for i, value in enumerate(values):
-        print(i, ":", value)
-        gauges[i].labels(unit='Amps').set(value)
+        gauges[i].labels(unit=['unit']).set(value)
 
 # Start consuming messages from the RabbitMQ queue
 channel.basic_consume(
