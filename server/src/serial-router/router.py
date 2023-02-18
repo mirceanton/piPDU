@@ -58,8 +58,14 @@ def queue_message_callback(ch, method, properties, body):
         return
 
     if (command == "socket"):
-        cmd = 'A' if args['state'] else 'a'
-        cmd = chr(ord(cmd) + args['id'])
+        if args['id'] is None:
+            if args['state'] == True:
+                cmd = 'r'
+            else:
+                cmd = 'q'
+        else:
+            cmd = 'A' if args['state'] else 'a'
+            cmd = chr(ord(cmd) + args['id'])
 
         ser.write(bytes(cmd, 'utf-8'))
         print(f'INFO: Sent message over serial: {cmd}')
