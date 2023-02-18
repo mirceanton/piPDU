@@ -59,9 +59,15 @@ void serialEvent() {
     return;
   }
 
-  const int relayId = (message - 'a');
-  if (0 <= relayId && relayId < 16) {
-    relays[relayId]->toggle();
-    return;
+  if (isUpperCase(message)) {
+    const int relayId = (message - 'A');
+    if (0 <= relayId && relayId < 16) {
+      relays[relayId]->on();
+    }
+  } else {
+    const int relayId = (message - 'a');
+    if (0 <= relayId && relayId < 16) {
+      relays[relayId]->off();
+    }
   }
 }
