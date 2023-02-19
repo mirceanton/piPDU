@@ -4,6 +4,7 @@ FROM python:3.9.16-alpine3.16
 WORKDIR /app
 
 # Copy over the required files into the working directory
+COPY utils/* ./utils/
 COPY router.py .
 COPY requirements.txt .
 

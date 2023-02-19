@@ -4,6 +4,7 @@ FROM python:3.9.16-alpine3.16
 WORKDIR /app
 
 # Copy the code files to the working directory
+COPY utils/* utils/
 COPY scheduler.py .
 COPY requirements.txt .
 
