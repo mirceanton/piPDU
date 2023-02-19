@@ -1,14 +1,17 @@
-import os
-from flask import Flask, jsonify
-from routes.routes import api_blueprint
-
-# Get the serial device and baud rate from environment variables
-API_HOST = os.environ['API_HOST']
-API_PORT = int(os.environ['API_PORT'])
+import utils.constants as constants
+from routes.ping import blueprint as ping_blueprint
+from routes.sockets.all import blueprint as sockets_all_blueprint
+from routes.sockets.by_id import blueprint as sockets_by_id_blueprint
+from flask import Flask
 
 # Create a Flask application and register the endpoints
 app = Flask(__name__)
-app.register_blueprint(api_blueprint, url_prefix="/api")
+app.register_blueprint(ping_blueprint, url_prefix="/api/v1/ping")
+app.register_blueprint(sockets_all_blueprint, url_prefix="/api/v1/sockets/all")
+app.register_blueprint(sockets_by_id_blueprint, url_prefix="/api/v1/socket")
 
-print(f'INFO: Flask Server started on host {API_HOST} on port {API_PORT}')
-app.run(host=API_HOST, port=API_PORT)
+print(f'INFO: Flask Server started on host {constants.API_HOST} on port {constants.API_PORT}')
+app.run(
+    host = constants.API_HOST,
+    port = constants.API_PORT
+)
