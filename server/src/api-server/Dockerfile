@@ -9,7 +9,8 @@ RUN pip install -r requirements.txt
 
 # Copy the code files to the working directory
 COPY utils/* ./utils/
-COPY routes/* ./routes/
+COPY routes/ping.py ./routes/ping.py
+COPY routes/sockets/*.py ./routes/sockets/
 COPY api.py .
 
 # Run the Python script
