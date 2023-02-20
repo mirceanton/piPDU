@@ -20,10 +20,11 @@ def queue_message_callback(ch, method, properties, body):
     elif (command == "socket"):
         if args['id'] is None:
             cmd = 'r' if args['state'] is True else 'q'
+            arduino.write(cmd)
         else:
             cmd = 'A' if args['state'] is True else 'a'
             cmd = chr(ord(cmd) + args['id'])
-        arduino.write(cmd)
+            arduino.write(cmd)
     else:
         print(f'ERROR: Invalid command {command}')
 

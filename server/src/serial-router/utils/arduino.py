@@ -21,8 +21,8 @@ class Arduino:
         return message
 
     def write(self, message: str):
-        self.ser.write(bytes(cmd, 'utf-8'))
-        print(f'INFO: Sent message over serial: {cmd}')
+        self.ser.write(bytes(message, 'utf-8'))
+        print(f'INFO: Sent message over serial: {message}')
 
     def close(self):
         print(f'INFO: Closing the serial connection.')
