@@ -17,7 +17,7 @@ const int sensorPins[numSockets] = {A11, A10, A1, A7, A6, A2, A14, A15, A5, A0, 
 ACS712 *sensors[numSockets];
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(921600);
 
   for (int i = 0; i < numSockets; i++) {
     relays[i] = new Relay(relayPins[i], true);
