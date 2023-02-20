@@ -7,7 +7,7 @@ upload:
 	arduino-cli upload arduino.ino --fqbn arduino:avr:mega -p /dev/ttyACM0 -v;
 
 monitor:
-	arduino-cli  monitor -p /dev/ttyACM0;
+	arduino-cli monitor -p /dev/ttyACM0 --config baudrate=921600;
 
 debug: compile upload monitor
 
