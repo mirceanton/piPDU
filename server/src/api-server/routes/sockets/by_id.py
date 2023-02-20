@@ -1,7 +1,7 @@
 from utils.rabbitmq import rabbitmq
 from utils.message_builder import MessageBuilder
 from utils.sockets import sockets
-from flask import Blueprint, make_response, jsonify
+from flask import Blueprint, make_response, jsonify, request
 import json
 
 blueprint = Blueprint('sockets_by_id', __name__)
@@ -15,11 +15,12 @@ def turn(id: int, state: bool):
             'status': True,
             'payload': {}
         }, 200)
-    
+
     return make_response(jsonify(({
         'status': False,
         'payload': {
-            'error': 'Unable to send message'}
+            'error': 'Unable to send message'
+        }
     }), 500))
 
 def setState(id: int, state: bool):
@@ -28,6 +29,17 @@ def setState(id: int, state: bool):
         'status': True,
         'payload': { 'message': 'Socket status updated' }
     }, 200)
+
+@blueprint.before_request
+def index_validator():
+    number = request.view_args.get('number')
+    if number < 0 or number > 15:
+        return make_response({
+            'success': False,
+            'payload': {
+                'error': 'Index out of range.'
+            }
+        }, 400)
 
 @blueprint.route('/<int:number>/info', methods=['GET'])
 def info(number: int):
