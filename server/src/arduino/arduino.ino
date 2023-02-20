@@ -38,6 +38,7 @@ void loop() {
     message += String(sensors[i]->getAmps()) + " ";
   }
   Serial.println(message);
+  Serial.flush();
 }
 
 void serialEvent() {
