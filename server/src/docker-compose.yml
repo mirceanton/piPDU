@@ -13,8 +13,8 @@ services:
     image: rabbitmq:alpine
     restart: unless-stopped
     environment:
-      RABBITMQ_DEFAULT_USER: "user123"
-      RABBITMQ_DEFAULT_PASS: "pass123"
+      RABBITMQ_DEFAULT_USER: user123
+      RABBITMQ_DEFAULT_PASS: pass123
     ports:
      - 5672:5672
      - 15672:15672
@@ -30,14 +30,9 @@ services:
   serial-router:
     image: antonmircea/pipdu-serial-router
     build: ./serial-router
-    restart: unless-stopped
+    restart: always
     privileged: true
     environment:
-      SERIAL_DEVICE: /dev/ttyACM0
-      SERIAL_BAUDRATE: 9600
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
-      RABBITMQ_PATH: /
       RABBITMQ_USER: user123
       RABBITMQ_PASS: pass123
     depends_on:
@@ -49,49 +44,34 @@ services:
     build: ./metrics-server
     restart: unless-stopped
     environment:
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
-      RABBITMQ_PATH: /
       RABBITMQ_USER: user123
       RABBITMQ_PASS: pass123
     depends_on:
       rabbitmq:
         condition: service_healthy
-      serial-router:
-        condition: service_started
+    ports:
+     - 8000:8000
 
   metrics-scheduler:
     image: antonmircea/pipdu-metrics-scheduler
     build: ./metrics-scheduler
     restart: unless-stopped
     environment:
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
-      RABBITMQ_PATH: /
       RABBITMQ_USER: user123
       RABBITMQ_PASS: pass123
     depends_on:
       rabbitmq:
         condition: service_healthy
-      serial-router:
-        condition: service_started
-      metrics-server:
-        condition: service_started
-    logging:
-      driver: none
 
-  # api-server:
-  #   image: antonmircea/pipdu-metrics-scheduler
-  #   build: ./metrics-scheduler
-  #   restart: unless-stopped
-  #   environment:
-  #     RABBITMQ_HOST: rabbitmq
-  #     RABBITMQ_PORT: 5672
-  #     RABBITMQ_PATH: /
-  #     RABBITMQ_USER: user123
-  #     RABBITMQ_PASS: pass123
-  #   depends_on:
-  #     rabbitmq:
-  #       condition: service_healthy
-  #     serial-router:
-  #       condition: service_started
+  api-server:
+    image: antonmircea/pipdu-api-server
+    build: api-server
+    restart: unless-stopped
+    environment:
+      RABBITMQ_USER: user123
+      RABBITMQ_PASS: pass123
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    ports:
+     - 3000:3000
