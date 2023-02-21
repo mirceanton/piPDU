@@ -1,14 +1,16 @@
+import utils.constants as constants\
 from utils.rabbitmq import rabbitmq
 from utils.message_builder import MessageBuilder
 from utils.sockets import sockets
 from flask import Blueprint, make_response, jsonify, request
-import json
 
 blueprint = Blueprint('sockets_by_id', __name__)
 
 def turn(id: int, state: bool):
-    message = MessageBuilder().setState(state).setId(id).build()
-    status, err = rabbitmq.publish(message)
+    status, err = rabbitmq.publish(
+        queue = constants.RABBITMQ_COMMANDS_QUEUE,
+        message = MessageBuilder().setState(state).setId(id).build()
+    )
 
     if err is None:
         return make_response({
@@ -19,7 +21,8 @@ def turn(id: int, state: bool):
     return make_response(jsonify(({
         'status': False,
         'payload': {
-            'error': 'Unable to send message'
+            'message': 'Unable to send message',
+            'error': err
         }
     }), 500))
 

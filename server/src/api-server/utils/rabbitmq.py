@@ -1,34 +1,32 @@
 import utils.constants as constants
 import pika
-import json
-import time
 
 class RabbitMQ:
-    def __init__(self):
+    def __init__(self, username, password, host, port, path):
         self.connection = None
         self.channel = None
 
         # RabbitMQ connection parameters
-        credentials = pika.PlainCredentials(constants.RABBITMQ_USER, constants.RABBITMQ_PASS)
-        parameters = pika.ConnectionParameters(constants.RABBITMQ_HOST, constants.RABBITMQ_PORT, constants.RABBITMQ_PATH, credentials)
+        credentials = pika.PlainCredentials(username, password)
+        parameters = pika.ConnectionParameters(host, port, path, credentials)
 
         # Create a RabbitMQ connection and channel, and declare the queue
         try:
             self.connection = pika.BlockingConnection(parameters)
             print('INFO: Connection established to RabbitMQ')
             self.channel = self.connection.channel()
-            self.channel.queue_declare(queue=constants.RABBITMQ_COMMANDS_QUEUE)
-            print('INFO: RabbitMQ queue declared')
-
         except pika.exceptions.AMQPConnectionError:
             print('ERROR: Could not connect to RabbitMQ. Check your connection settings.')
             exit(1)
 
-    def publish(self, message: str):
+    def declareQueue(self, queue: str):
+        self.channel.queue_declare(queue = queue)
+
+    def publish(self, queue: str, message: str):
         try:
             self.channel.basic_publish(
                 exchange = '',
-                routing_key = constants.RABBITMQ_COMMANDS_QUEUE,
+                routing_key = queue,
                 body = message
             )
             print("INFO: Sent message to queue: " + message)
@@ -41,4 +39,11 @@ class RabbitMQ:
         print(f'INFO: Closing the RabbitMQ Connection.')
         self.connection.close()
 
-rabbitmq = RabbitMQ()
+rabbitmq = RabbitMQ(
+    username = constants.RABBITMQ_USER,
+    password = constants.RABBITMQ_PASS,
+    host = constants.RABBITMQ_HOST,
+    port = constants.RABBITMQ_PORT,
+    path = constants.RABBITMQ_PATH
+)
+rabbitmq.declareQueue(constants.RABBITMQ_COMMANDS_QUEUE)

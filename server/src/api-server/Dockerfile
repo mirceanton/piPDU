@@ -14,4 +14,4 @@ COPY routes/sockets/*.py ./routes/sockets/
 COPY api.py .
 
 # Run the Python script
-CMD ["python", "api.py"]
+CMD ["python", "-u", "api.py"]
