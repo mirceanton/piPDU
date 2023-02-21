@@ -42,3 +42,4 @@ except KeyboardInterrupt:
     rabbitmq.close()
 except Exception as e:
     print(f'ERROR: An unexpected error occurred: {e}')
+    exit(1)
