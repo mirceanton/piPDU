@@ -23,6 +23,8 @@ class Arduino:
 
     def write(self, message: str):
         self.ser.write(bytes(message, 'utf-8'))
+        self.ser.flush()
+        self.ser.reset_output_buffer()
         print(f'INFO: Sent message over serial: {message}')
 
     def close(self):
