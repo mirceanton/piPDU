@@ -2,9 +2,9 @@ import utils.constants as constants
 import serial
 
 class Arduino:
-    def __init__(self):
+    def __init__(self, device, baud_rate):
         try:
-            self.ser = serial.Serial(constants.SERIAL_DEVICE, constants.SERIAL_BAUDRATE)
+            self.ser = serial.Serial(device, baud_rate)
             self.ser.reset_input_buffer()
             self.ser.reset_output_buffer()
             print("INFO: Serial connection initialized")

@@ -1,9 +1,19 @@
 from utils.rabbitmq import RabbitMQ
 from utils.arduino import Arduino
+import utils.constants as constants
 import json
 
-rabbitmq = RabbitMQ()
-arduino = Arduino()
+rabbitmq = RabbitMQ(
+    username = constants.RABBITMQ_USER,
+    password = constants.RABBITMQ_PASS,
+    host = constants.RABBITMQ_HOST,
+    port = constants.RABBITMQ_PORT,
+    path = constants.RABBITMQ_PATH
+)
+arduino = Arduino(
+    device = constants.SERIAL_DEVICE,
+    baud_rate = constants.SERIAL_BAUDRATE
+)
 
 def queue_message_callback(ch, method, properties, body):
     data = json.loads(body.decode('utf-8'))

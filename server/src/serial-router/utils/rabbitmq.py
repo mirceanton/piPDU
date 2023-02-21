@@ -1,14 +1,13 @@
-import utils.constants as constants
 import pika
 
 class RabbitMQ:
-    def __init__(self):
+    def __init__(self, username, password, host, port, path):
         self.connection = None
         self.channel = None
 
         # RabbitMQ connection parameters
-        credentials = pika.PlainCredentials(constants.RABBITMQ_USER, constants.RABBITMQ_PASS)
-        parameters = pika.ConnectionParameters(constants.RABBITMQ_HOST, constants.RABBITMQ_PORT, constants.RABBITMQ_PATH, credentials)
+        credentials = pika.PlainCredentials(username, password)
+        parameters = pika.ConnectionParameters(host, port, path, credentials)
 
         # Create a RabbitMQ connection and channel, and declare the queue
         try:
