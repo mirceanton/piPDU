@@ -3,6 +3,11 @@ from utils.arduino import Arduino
 import utils.constants as constants
 import json
 
+arduino = Arduino(
+    device = constants.SERIAL_DEVICE,
+    baud_rate = constants.SERIAL_BAUDRATE
+)
+
 rabbitmq = RabbitMQ(
     username = constants.RABBITMQ_USER,
     password = constants.RABBITMQ_PASS,
@@ -10,10 +15,8 @@ rabbitmq = RabbitMQ(
     port = constants.RABBITMQ_PORT,
     path = constants.RABBITMQ_PATH
 )
-arduino = Arduino(
-    device = constants.SERIAL_DEVICE,
-    baud_rate = constants.SERIAL_BAUDRATE
-)
+rabbitmq.declareQueue(constants.RABBITMQ_COMMANDS_QUEUE)
+rabbitmq.declareQueue(constants.RABBITMQ_METRICS_QUEUE)
 
 def queue_message_callback(ch, method, properties, body):
     data = json.loads(body.decode('utf-8'))
@@ -28,7 +31,10 @@ def queue_message_callback(ch, method, properties, body):
         message = arduino.read()
         print(f'DEBUG: Message read from arduino: {message}')
         if message:
-            rabbitmq.publish(message)
+            rabbitmq.publish(
+                queue = constants.RABBITMQ_METRICS_QUEUE,
+                message = message
+            )
             print(f'INFO: Message enqueued')
         return
 
@@ -47,7 +53,11 @@ def queue_message_callback(ch, method, properties, body):
 
     print(f'ERROR: Invalid command {command}')
 
-rabbitmq.setCallback(queue_message_callback)
+rabbitmq.setConsumeCallback(
+    queue = constants.RABBITMQ_COMMANDS_QUEUE,
+    callback = queue_message_callback,
+    tag = constants.RABBITMQ_CONSUMER_TAG
+)
 
 try:
     rabbitmq.consume()
