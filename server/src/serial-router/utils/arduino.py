@@ -5,6 +5,8 @@ class Arduino:
     def __init__(self):
         try:
             self.ser = serial.Serial(constants.SERIAL_DEVICE, constants.SERIAL_BAUDRATE)
+            self.ser.reset_input_buffer()
+            self.ser.reset_output_buffer()
             print("INFO: Serial connection initialized")
         except serial.SerialException as err:
             print(f'ERROR: Could not connect to serial device: {err}')
