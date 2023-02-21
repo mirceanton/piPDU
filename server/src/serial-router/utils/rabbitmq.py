@@ -14,8 +14,6 @@ class RabbitMQ:
             self.connection = pika.BlockingConnection(parameters)
             print('INFO: Connection established to RabbitMQ')
             self.channel = self.connection.channel()
-            print('INFO: RabbitMQ queues declared')
-
         except pika.exceptions.AMQPConnectionError:
             print('ERROR: Could not connect to RabbitMQ. Check your connection settings.')
             exit(1)
@@ -43,7 +41,7 @@ class RabbitMQ:
             consumer_tag = tag
         )
 
-    def consume(self):
+    def startConsuming(self):
         print(f'INFO: Serial Router is listening for messages...')
         self.channel.start_consuming()
     

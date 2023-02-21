@@ -60,7 +60,7 @@ rabbitmq.setConsumeCallback(
 )
 
 try:
-    rabbitmq.consume()
+    rabbitmq.startConsuming()
 except KeyboardInterrupt:
     print(f'INFO: Received Keyboard Interrupt')
     arduino.close()

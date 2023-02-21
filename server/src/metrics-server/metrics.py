@@ -2,6 +2,8 @@ from utils.rabbitmq import RabbitMQ
 from utils.prometheus import Prometheus
 import utils.constants as constants
 
+prometheus = Prometheus()
+
 rabbitmq = RabbitMQ(
     username = constants.RABBITMQ_USER,
     password = constants.RABBITMQ_PASS,
@@ -9,7 +11,7 @@ rabbitmq = RabbitMQ(
     port = constants.RABBITMQ_PORT,
     path = constants.RABBITMQ_PATH
 )
-prometheus = Prometheus()
+rabbitmq.declareQueue(constants.RABBITMQ_METRICS_QUEUE)
 
 # Define the callback function for handling incoming messages
 def queue_message_callback(ch, method, properties, body):
@@ -23,10 +25,14 @@ def queue_message_callback(ch, method, properties, body):
     else:
         prometheus.update( map(float, values) )
 
-rabbitmq.setCallback(queue_message_callback)
+rabbitmq.setConsumeCallback(
+    queue = constants.RABBITMQ_METRICS_QUEUE,
+    callback = queue_message_callback,
+    tag = constants.RABBITMQ_CONSUMER_TAG
+)
 
 try:
-    rabbitmq.consume()
+    rabbitmq.startConsuming()
 except KeyboardInterrupt:
     print(f'INFO: Received Keyboard Interrupt')
     rabbitmq.close()
