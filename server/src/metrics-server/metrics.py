@@ -1,7 +1,14 @@
 from utils.rabbitmq import RabbitMQ
 from utils.prometheus import Prometheus
+import utils.constants as constants
 
-rabbitmq = RabbitMQ()
+rabbitmq = RabbitMQ(
+    username = constants.RABBITMQ_USER,
+    password = constants.RABBITMQ_PASS,
+    host = constants.RABBITMQ_HOST,
+    port = constants.RABBITMQ_PORT,
+    path = constants.RABBITMQ_PATH
+)
 prometheus = Prometheus()
 
 # Define the callback function for handling incoming messages
