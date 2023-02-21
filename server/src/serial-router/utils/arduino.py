@@ -11,11 +11,10 @@ class Arduino:
             exit(1)
 
     def read(self):
-        if (self.ser.in_waiting < 0):
+        if (self.ser.in_waiting <= 0):
             return None
 
         message = self.ser.readline().decode('utf-8').rstrip()
-        self.ser.flush()
         print(f'INFO: Got message from serial: {message}')
 
         return message
