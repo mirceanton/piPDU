@@ -13,6 +13,7 @@ def turn(id: int, state: bool):
     )
 
     if err is None:
+        setState(id, state)
         return make_response({
             'status': True,
             'payload': {}
