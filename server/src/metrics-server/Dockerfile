@@ -16,4 +16,4 @@ COPY metrics.py .
 EXPOSE 8000
 
 # Run the Python script
-CMD ["python", "metrics.py"]
+CMD ["python", "-u", "metrics.py"]

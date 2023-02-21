@@ -14,4 +14,4 @@ COPY scheduler.py .
 
 
 # Run the Python script
-CMD ["python", "scheduler.py"]
+CMD ["python", "-u", "scheduler.py"]

@@ -13,4 +13,4 @@ COPY utils/* ./utils/
 COPY router.py .
 
 # Run the Python script
-CMD ["python", "router.py"]
+CMD ["python", "-u", "router.py"]
