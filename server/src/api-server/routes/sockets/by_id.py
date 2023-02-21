@@ -22,8 +22,7 @@ def turn(id: int, state: bool):
     return make_response(jsonify(({
         'status': False,
         'payload': {
-            'message': 'Unable to send message',
-            'error': err
+            'error': 'Unable to send message',
         }
     }), 500))
 

@@ -2,7 +2,7 @@ import utils.constants as constants
 from utils.rabbitmq import rabbitmq
 from utils.message_builder import MessageBuilder
 from utils.sockets import sockets
-from flask import Blueprint, make_response
+from flask import Blueprint, make_response, jsonify
 
 blueprint = Blueprint('sockets_all', __name__)
 
@@ -22,8 +22,7 @@ def turn(state: bool):
     return make_response(jsonify(({
         'status': False,
         'payload': {
-            'message': 'Unable to send message',
-            'error': err
+            'error': 'Unable to send message',
         }
     }), 500))
 
