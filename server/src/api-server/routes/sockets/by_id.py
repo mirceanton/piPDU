@@ -1,4 +1,4 @@
-import utils.constants as constants\
+import utils.constants as constants
 from utils.rabbitmq import rabbitmq
 from utils.message_builder import MessageBuilder
 from utils.sockets import sockets
