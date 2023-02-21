@@ -1,4 +1,3 @@
-import utils.constants as constants
 import pika
 
 class RabbitMQ:
@@ -35,15 +34,6 @@ class RabbitMQ:
             print(f'ERROR: An error occured publishing the message: {ex}')
             return False, ex
 
-    def __del__(self):
+    def close(self):
         print(f'INFO: Closing the RabbitMQ Connection.')
         self.connection.close()
-
-rabbitmq = RabbitMQ(
-    username = constants.RABBITMQ_USER,
-    password = constants.RABBITMQ_PASS,
-    host = constants.RABBITMQ_HOST,
-    port = constants.RABBITMQ_PORT,
-    path = constants.RABBITMQ_PATH
-)
-rabbitmq.declareQueue(constants.RABBITMQ_COMMANDS_QUEUE)
