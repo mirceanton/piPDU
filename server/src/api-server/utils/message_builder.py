@@ -8,20 +8,17 @@ class MessageBuilder():
             'timestamp': None,
             'sender': constants.RABBITMQ_PRODUCER_TAG,
             'payload': {
-                'command': 'socket',
-                'args': {
-                    'id': None,
-                    'state': None
-                }
+                'id': None,
+                'state': None
             }
         }
 
     def setId(self, id: int):
-        self.message['payload']['args']['id'] = id
+        self.message['payload']['id'] = id
         return self
 
     def setState(self, state: bool):
-        self.message['payload']['args']['state'] = state
+        self.message['payload']['state'] = state
         return self
 
     def build(self):
