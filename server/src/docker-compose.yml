@@ -52,17 +52,6 @@ services:
     ports:
      - 8000:8000
 
-  metrics-scheduler:
-    image: antonmircea/pipdu-metrics-scheduler
-    build: ./metrics-scheduler
-    restart: unless-stopped
-    environment:
-      RABBITMQ_USER: user123
-      RABBITMQ_PASS: pass123
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-
   api-server:
     image: antonmircea/pipdu-api-server
     build: api-server
