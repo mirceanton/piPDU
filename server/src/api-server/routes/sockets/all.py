@@ -1,4 +1,3 @@
-from utils.message_builder import MessageBuilder
 import utils.constants as constants
 from utils.rabbitmq import RabbitMQ
 from utils.sockets import sockets
@@ -17,7 +16,7 @@ def turn(state: bool):
     rabbitmq.declareQueue(constants.RABBITMQ_COMMANDS_QUEUE)
     status, err = rabbitmq.publish(
         queue = constants.RABBITMQ_COMMANDS_QUEUE,
-        message = MessageBuilder().setState(state).build()
+        message = json.dumps({'state': state, 'id': None})
     )
     rabbitmq.close()
 
