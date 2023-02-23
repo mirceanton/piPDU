@@ -1,7 +1,7 @@
 import pika
 
 class RabbitMQ:
-    def __init__(self, username, password, host, port, path):
+    def __init__(self, username: str, password: str, host: str, port: int, path: str):
         self.connection = None
         self.channel = None
 
@@ -32,19 +32,17 @@ class RabbitMQ:
         except Exception as ex:
             print(f'ERROR: An error occured publishing the message: {ex}')
 
-    def setConsumeCallback(self, queue, callback, tag):
-        self.channel.basic_consume(
-            queue = queue,
-            on_message_callback = callback,
-            auto_ack = True,
-            exclusive = True,
-            consumer_tag = tag
-        )
+    def consume(self, queue: str, callback):
+        method_frame, header_frame, body = self.channel.basic_get(queue)
+        if method_frame is None:
+            return
+        callback(body)
+        self.channel.basic_ack(delivery_tag = method_frame.delivery_tag)
 
-    def startConsuming(self):
-        print(f'INFO: Serial Router is listening for messages...')
-        self.channel.start_consuming()
     
+    def hasMessage(self, queue: str):
+        return self.channel.queue_declare(queue = queue).method.message_count
+
     def close(self):
         print(f'INFO: Closing the RabbitMQ Connection.')
         self.connection.close()

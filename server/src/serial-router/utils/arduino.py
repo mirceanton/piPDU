@@ -13,13 +13,12 @@ class Arduino:
             exit(1)
 
     def read(self):
-        if (self.ser.in_waiting <= 0):
-            return None
-
         message = self.ser.readline().decode('utf-8').rstrip()
         print(f'INFO: Got message from serial: {message}')
-
         return message
+
+    def hasMessage(self):
+        return self.ser.in_waiting > 0
 
     def write(self, message: str):
         self.ser.write(bytes(message, 'utf-8'))
