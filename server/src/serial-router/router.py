@@ -23,14 +23,11 @@ def queue_message_callback(body):
     data = json.loads(body.decode('utf-8'))
     print(f'INFO: Got message from queue: {data}')
 
-    cmd = ""
+    if data['id'] is None:
+        return arduino.write('r' if data['state'] is True else 'q')
 
-    if data['payload']['id'] is None:
-        cmd = 'r' if data['payload']['state'] is True else 'q'
-    else:
-        cmd = 'A' if data['payload']['state'] is True else 'a'
-        cmd = chr(ord(cmd) + data['payload']['id'])
-
+    cmd = 'A' if data['state'] is True else 'a'
+    cmd = chr(ord(cmd) + data['id'])
     arduino.write(cmd)
 
 try:
