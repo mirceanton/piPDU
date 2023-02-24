@@ -2,29 +2,32 @@
 image: busybox:latest
 
 variables:
-  CI_REGISTRY_IMAGE: "$DOCKERHUB_USER/api-server"
+  DOCKER_IMAGE: "$DOCKERHUB_USER/api-server"
+  DOCKER_REGISTRY: registry.hub.docker.com 
 
 before_script:
   - cd server/src/api-server
 
-build-release:
-  stage: build
-  script:
-    - echo "Do your build here"
-  only:
-    - main
-
-build-dev:
+docker:build:
   stage: build
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   script:
-    - export BUILD_VERSION=$(cat VERSION | tr -d '\n')
-    - /kaniko/executor
-      --context .
-      --dockerfile Dockerfile
-      --destination $CI_REGISTRY_IMAGE:$BUILD_VERSION
-      --cache
-  except:
-    - main
+  - /kaniko/executor --no-push --tarPath apiserver.tar
+  artifacts:
+    paths:
+    - apiserver.tar
+    when: on_success
+
+docker:push:
+  stage: push
+  image:
+    name: gcr.io/go-containerregistry/crane:debug
+    entrypoint: [""]
+  script:
+  - export BUILD_VERSION=$(cat VERSION | tr -d '\n')
+  - crane auth login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN $DOCKER_REGISTRY
+  - crane push apiserver.tar $DOCKER_REGISTRY/$DOCKER_IMAGE:dev-$BUILD_VERSION
+  needs:
+  - docker:build
