@@ -4,6 +4,9 @@ image: busybox:latest
 variables:
   CI_REGISTRY_IMAGE: "$DOCKERHUB_USER/api-server"
 
+before_script:
+  - cd server/src/api-server
+
 build-release:
   stage: build
   script:
@@ -18,8 +21,9 @@ build-dev:
     entrypoint: [""]
   script:
     - export BUILD_VERSION=$(cat VERSION | tr -d '\n')
+    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN
     - /kaniko/executor
-      --context server/src/api-server
+      --context .
       --dockerfile Dockerfile
       --destination $CI_REGISTRY_IMAGE:$BUILD_VERSION
       --cache
