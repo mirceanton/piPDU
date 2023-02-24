@@ -21,7 +21,6 @@ build-dev:
     entrypoint: [""]
   script:
     - export BUILD_VERSION=$(cat VERSION | tr -d '\n')
-    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN
     - /kaniko/executor
       --context .
       --dockerfile Dockerfile
