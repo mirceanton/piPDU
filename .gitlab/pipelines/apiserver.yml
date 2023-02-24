@@ -21,7 +21,7 @@ docker:build:
     when: on_success
 
 docker:push:
-  stage: push
+  stage: deploy
   image:
     name: gcr.io/go-containerregistry/crane:debug
     entrypoint: [""]
