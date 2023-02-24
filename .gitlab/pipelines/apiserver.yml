@@ -6,7 +6,9 @@ variables:
 before_script:
   - export BUILD_VERSION=$(cat server/src/api-server/VERSION | tr -d '\n')
 
+# =================================================================================================
 # Always build the image to see if everything is still building ok
+# =================================================================================================
 kaniko:build:
   stage: build
   image:
@@ -24,7 +26,9 @@ kaniko:build:
     - apiserver.tar
     when: on_success
 
-# Push a development version of the image on any MR
+# =================================================================================================
+# Push a development version of the image on any MR action
+# =================================================================================================
 crane:push-dev:
   stage: deploy
   image:
@@ -37,7 +41,9 @@ crane:push-dev:
   only:
   - merge_requests
 
+# =================================================================================================
 # Push a new release version when a tag is created on the main branch
+# =================================================================================================
 crane:release:
   stage: deploy
   image:
