@@ -2,13 +2,10 @@
 image: busybox:latest
 
 variables:
-  DOCKER_IMAGE: "$DOCKERHUB_USER/api-server"
+  DOCKER_IMAGE: "$DOCKERHUB_USER/pipdu-api-server"
   DOCKER_REGISTRY: registry.hub.docker.com 
 
-before_script:
-  - export BUILD_VERSION=$(cat server/src/api-server/VERSION | tr -d '\n')
-
-docker:build:
+kaniko:build:
   stage: build
   image:
     name: gcr.io/kaniko-project/executor:debug
@@ -19,19 +16,18 @@ docker:build:
       --dockerfile server/src/api-server/Dockerfile
       --no-push
       --tarPath apiserver.tar
-      --destination $DOCKER_REGISTRY/$DOCKER_IMAGE:dev-$BUILD_VERSION
+      --destination $DOCKER_REGISTRY/$DOCKER_IMAGE:kaniko-cache # this is ignored due to --no-push
   artifacts:
     paths:
     - apiserver.tar
     when: on_success
 
-docker:push:
+crane:push:
   stage: deploy
   image:
     name: gcr.io/go-containerregistry/crane:debug
     entrypoint: [""]
   script:
+  - export BUILD_VERSION=$(cat server/src/api-server/VERSION | tr -d '\n')
   - crane auth login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN $DOCKER_REGISTRY
   - crane push apiserver.tar $DOCKER_REGISTRY/$DOCKER_IMAGE:dev-$BUILD_VERSION
-  needs:
-  - docker:build
