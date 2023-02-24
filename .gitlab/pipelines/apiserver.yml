@@ -1,11 +1,8 @@
 ---
 image: busybox:latest
 
-before_script:
-  - echo "Before script section"
-
-after_script:
-  - echo "After script section"
+variables:
+  CI_REGISTRY_IMAGE: "$DOCKERHUB_USER/api-server"
 
 build-release:
   stage: build
@@ -16,17 +13,15 @@ build-release:
 
 build-dev:
   stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
   script:
-    - echo "Do your build here"
+    - export BUILD_VERSION=$(cat VERSION | tr -d '\n')
+    - /kaniko/executor
+      --context server/src/api-server
+      --dockerfile Dockerfile
+      --destination $CI_REGISTRY_IMAGE:$BUILD_VERSION
+      --cache
   except:
     - main
-
-test1:
-  stage: test
-  script:
-    - echo "Do a test here"
-
-deploy:
-  stage: deploy
-  script:
-    - echo "Do your deploy here"
