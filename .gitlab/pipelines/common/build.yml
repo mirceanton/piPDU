@@ -17,7 +17,7 @@ kaniko:build:
       --context "$SERVICE_DIRECTORY"
       --dockerfile "$SERVICE_DIRECTORY/Dockerfile"
       --tarPath "$SERVICE_NAME.tar"
-      --destination $DOCKER_REGISTRY/$DOCKER_IMAGE:kaniko-cache # this is ignored due to --no-push
+      --destination $DOCKER_REGISTRY/$DOCKER_IMAGE:kaniko-cache
       --no-push
   artifacts:
     paths:
