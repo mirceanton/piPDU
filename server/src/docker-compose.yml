@@ -1,0 +1,66 @@
+---
+version: '2.2'
+
+services:
+  arduino-uploader:
+    image: antonmircea/pipdu-arduino-uploader
+    build: ./arduino
+    restart: on-failure
+    privileged: true
+
+  rabbitmq:
+    # image: arm32v7/rabbitmq:3.10-management-alpine
+    image: rabbitmq:alpine
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: user123
+      RABBITMQ_DEFAULT_PASS: pass123
+    ports:
+     - 5672:5672
+     - 15672:15672
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    depends_on:
+      arduino-uploader:
+        condition: service_started
+
+  serial-router:
+    image: antonmircea/pipdu-serial-router
+    build: ./serial-router
+    restart: always
+    privileged: true
+    environment:
+      RABBITMQ_USER: user123
+      RABBITMQ_PASS: pass123
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  metrics-server:
+    image: antonmircea/pipdu-metrics-server
+    build: ./metrics-server
+    restart: unless-stopped
+    environment:
+      RABBITMQ_USER: user123
+      RABBITMQ_PASS: pass123
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    ports:
+     - 8000:8000
+
+  api-server:
+    image: antonmircea/pipdu-api-server
+    build: api-server
+    restart: unless-stopped
+    environment:
+      RABBITMQ_USER: user123
+      RABBITMQ_PASS: pass123
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    ports:
+     - 3000:3000
