@@ -1,0 +1,4 @@
+---
+
+include:
+  - .gitlab/pipelines/apiserver.yml
