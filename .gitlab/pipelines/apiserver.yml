@@ -5,16 +5,17 @@ variables:
   DOCKER_IMAGE: "$DOCKERHUB_USER/api-server"
   DOCKER_REGISTRY: registry.hub.docker.com 
 
-before_script:
-  - cd server/src/api-server
-
 docker:build:
   stage: build
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   script:
-  - /kaniko/executor --no-push --tarPath apiserver.tar
+  - /kaniko/executor
+      --context server/src/api-server
+      --dockerfile server/src/api-server/Dockerfile
+      --no-push
+      --tarPath apiserver.tar
   artifacts:
     paths:
     - apiserver.tar
@@ -26,7 +27,7 @@ docker:push:
     name: gcr.io/go-containerregistry/crane:debug
     entrypoint: [""]
   script:
-  - export BUILD_VERSION=$(cat VERSION | tr -d '\n')
+  - export BUILD_VERSION=$(cat server/src/api-server/VERSION | tr -d '\n')
   - crane auth login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN $DOCKER_REGISTRY
   - crane push apiserver.tar $DOCKER_REGISTRY/$DOCKER_IMAGE:dev-$BUILD_VERSION
   needs:
