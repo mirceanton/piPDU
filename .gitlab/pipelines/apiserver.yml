@@ -7,22 +7,26 @@ before_script:
 after_script:
   - echo "After script section"
 
-build1:
+build-release:
   stage: build
   script:
     - echo "Do your build here"
+  only:
+    - main
+
+build-dev:
+  stage: build
+  script:
+    - echo "Do your build here"
+  except:
+    - main
 
 test1:
   stage: test
   script:
     - echo "Do a test here"
 
-test2:
-  stage: test
-  script:
-    - echo "Do another parallel test here"
-
-deploy1:
+deploy:
   stage: deploy
   script:
     - echo "Do your deploy here"
