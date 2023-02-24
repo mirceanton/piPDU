@@ -4,7 +4,6 @@ workflow:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: always
-    - when: never
 
 variables:
   SERVICE_NAME: api-server
