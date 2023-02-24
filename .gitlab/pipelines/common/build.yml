@@ -1,0 +1,25 @@
+---
+variables:
+  PROJECT_NAME: 'pipdu'
+  DOCKER_IMAGE: "$DOCKERHUB_USER/$PROJECT_NAME-$SERVICE_NAME"
+  DOCKER_REGISTRY: registry.hub.docker.com 
+
+# =================================================================================================
+# Build the Docker Image
+# =================================================================================================
+kaniko:build:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+  - /kaniko/executor
+      --context "$SERVICE_DIRECTORY"
+      --dockerfile "$SERVICE_DIRECTORY/Dockerfile"
+      --tarPath "$SERVICE_NAME.tar"
+      --destination $DOCKER_REGISTRY/$DOCKER_IMAGE:kaniko-cache # this is ignored due to --no-push
+      --no-push
+  artifacts:
+    paths:
+    - "$SERVICE_NAME.tar"
+    when: on_success

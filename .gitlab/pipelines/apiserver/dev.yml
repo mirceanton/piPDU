@@ -1,0 +1,16 @@
+---
+workflow:
+  name: 'Build and Push development version'
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: always
+    - when: never
+
+variables:
+  SERVICE_NAME: api-server
+  SERVICE_DIRECTORY: server/src/api-server
+  EXTRA_TAG: dev
+
+include:
+  - .gitlab/pipelines/common/build.yml
+  - .gitlab/pipelines/common/push.yml

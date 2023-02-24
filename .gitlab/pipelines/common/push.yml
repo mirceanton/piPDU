@@ -1,0 +1,19 @@
+---
+variables:
+  PROJECT_NAME: 'pipdu'
+  DOCKER_IMAGE: "$DOCKERHUB_USER/$PROJECT_NAME-$SERVICE_NAME"
+  DOCKER_REGISTRY: registry.hub.docker.com 
+
+# =================================================================================================
+# Push a development version of the image on any MR action
+# =================================================================================================
+crane:push:
+  stage: deploy
+  image:
+    name: gcr.io/go-containerregistry/crane:debug
+    entrypoint: [""]
+  script:
+  - export BUILD_VERSION=$(cat $SERVICE_DIRECTORY/VERSION | tr -d '\n')
+  - crane auth login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN $DOCKER_REGISTRY
+  - crane push apiserver.tar $DOCKER_REGISTRY/$DOCKER_IMAGE:$BUILD_VERSION$EXTRA_TAG
+  - crane push apiserver.tar $DOCKER_REGISTRY/$DOCKER_IMAGE:$BUILD_VERSION$EXTRA_TAG-latest

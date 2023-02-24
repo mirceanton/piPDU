@@ -1,4 +1,4 @@
 ---
 
 include:
-  - .gitlab/pipelines/apiserver.yml
+  - .gitlab/pipelines/apiserver/*.yml

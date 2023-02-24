@@ -1,0 +1,16 @@
+---
+workflow:
+  name: 'Build and Push Release Version'
+  rules:
+    - if: $CI_COMMIT_TAG != null && $CI_COMMIT_BRANCH == "master"
+      when: always
+    - when: never
+
+variables:
+  SERVICE_NAME: api-server
+  SERVICE_DIRECTORY: server/src/api-server
+  EXTRA_TAG: ""
+
+include:
+  - .gitlab/pipelines/common/build.yml
+  - .gitlab/pipelines/common/push.yml
