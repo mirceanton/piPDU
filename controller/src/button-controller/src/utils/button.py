@@ -28,9 +28,11 @@ class Button:
 
     def short_press(self) -> None:
         print(f"DEBUG: Executing short press action for button {self.index}")
+        # TODO
 
     def long_press(self) -> None:
         print(f"DEBUG:Executing long press action for button {self.index}")
+        # TODO
 
     def is_pressed(self) -> bool:
         return self.current_state is True and self.old_state is False
