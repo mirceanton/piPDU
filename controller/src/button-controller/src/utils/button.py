@@ -61,4 +61,4 @@ class Button:
         self.socket = sockets[index]
 
         # Initialize the pin by setting it to LOW as it is HIGH by default??
-        self.expander.set_output(self.pin, False)
+        self.expander.set_output(pin, False)
