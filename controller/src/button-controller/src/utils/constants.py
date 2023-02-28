@@ -6,6 +6,8 @@ EXPANDER_I2C_ADDR = [bytes([int(x, 16)]) for x in os.environ.get('EXPANDER_I2C_A
 BUTTON_LONG_PRESS_DURATION_SECONDS = int(os.environ.get('LONG_PRESS_DURATION_SECONDS'), '5')
 BUTTON_PINS = [ int(pin) for pin in os.environ.get('BUTTON_PINS', '1,3,5,7,9,11,13,15,0,2,4,6,8,10,12').split(",") ]
 
+PIPDU_SERVER_ADDRESS = os.environ.get('PIPDU_SERVER_ADDRESS')
+
 def get_expanders():
   if len(EXPANDER_I2C_BUS) < 1:
     raise ValueError("At least 1 i2c bus must be speciffied!\nEXPANDER_I2C_BUS is empty")
