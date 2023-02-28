@@ -1,7 +1,7 @@
 from pcf8574 import PCF8574
 import os
 
-EXPANDER_I2C_BUS = os.environ.get('EXPANDER_I2C_BUS').split(",")
+EXPANDER_I2C_BUS = [ int(x) for x in os.environ.get('EXPANDER_I2C_BUS').split(",") ]
 EXPANDER_I2C_ADDR = [bytes([int(x, 16)]) for x in os.environ.get('EXPANDER_I2C_ADDR').split(",")]
 
 BUTTON_LONG_PRESS_DURATION_SECONDS = int(os.environ.get('LONG_PRESS_DURATION_SECONDS', '5'))
