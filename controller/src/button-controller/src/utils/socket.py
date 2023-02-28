@@ -14,18 +14,16 @@ class SocketAPI:
 
   def on(self):
     on_url = f"{self.url}/{on}"
-
     print(f"DEBUG: Sending POST request to {on_url}")
     response = requests.post(on_url)
-    response.raise_for_status()  
+    response.raise_for_status()
     print("DEBUG: Request OK")
 
   def off(self):
-    off_url = f"{self.url}/{off}""
-
+    off_url = f"{self.url}/{off}"
     print(f"DEBUG: Sending POST request to {off_url}")
     response = requests.post(off_url)
-    response.raise_for_status()  
+    response.raise_for_status()
     print("DEBUG: Request OK")
 
   def __init__(self, id: int, state: bool = True):
