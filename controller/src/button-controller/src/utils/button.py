@@ -48,7 +48,7 @@ class Button:
         if self.last_press_time is None:
             return False
         time_held = (datetime.datetime.now() - self.last_press_time).total_seconds()
-        return time_held > constants.LONG_PRESS_DURATION_SECONDS
+        return time_held > constants.BUTTON_LONG_PRESS_DURATION_SECONDS
 
     def __init__(self, index: int, expander: PCF8574, pin: int):
         print(f"DEBUG: Initializing button {index}")
