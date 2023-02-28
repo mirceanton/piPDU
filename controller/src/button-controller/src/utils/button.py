@@ -1,6 +1,7 @@
+import utils.constants as constants
+from utils.socket import sockets
 from pcf8574 import PCF8574
 import datetime
-import utils.constants as constants
 
 class Button:
     def poll(self) -> None:
@@ -28,11 +29,11 @@ class Button:
 
     def short_press(self) -> None:
         print(f"DEBUG: Executing short press action for button {self.index}")
-        # TODO
+        # TODO set LCD status to INFO/IDLE
 
     def long_press(self) -> None:
         print(f"DEBUG:Executing long press action for button {self.index}")
-        # TODO
+        self.socket.toggle()
 
     def is_pressed(self) -> bool:
         return self.current_state is True and self.old_state is False
@@ -57,6 +58,7 @@ class Button:
         self.current_state = False
         self.old_state = False
         self.last_press_time = 0
-        
+        self.socket = sockets[index]
+
         # Initialize the pin by setting it to LOW as it is HIGH by default??
         self.expander.set_output(self.pin, False)
