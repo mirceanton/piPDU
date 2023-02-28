@@ -1,7 +1,7 @@
 import os
 
 EXPANDER_I2C_BUS = os.environ.get('EXPANDER_I2C_BUS').split(",")
-EXPANDER_I2C_ADDR = os.environ.get('EXPANDER_I2C_ADDR').split(",")
+EXPANDER_I2C_ADDR = [bytes([int(x, 16)]) for x in os.environ.get('EXPANDER_I2C_ADDR').split(",")]
 
 BUTTON_LONG_PRESS_DURATION_SECONDS = int(os.environ.get('LONG_PRESS_DURATION_SECONDS'), '5')
 BUTTON_PINS = [ int(pin) for pin in os.environ.get('BUTTON_PINS', '1,3,5,7,9,11,13,15,0,2,4,6,8,10,12').split(",") ]
