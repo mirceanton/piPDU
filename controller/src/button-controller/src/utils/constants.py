@@ -1,3 +1,4 @@
+from pcf8574 import PCF8574
 import os
 
 EXPANDER_I2C_BUS = os.environ.get('EXPANDER_I2C_BUS').split(",")
