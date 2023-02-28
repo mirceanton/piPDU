@@ -1,9 +1,14 @@
-from pcf8574 import PCF8574
-import time
-import utils.constants as constants
 from utils.button import Button
+import utils.constants as constants
 
-buttons = [ Button(index, expanders[pin // 8], pin % 8) for index, pin in enumerate(constants.BUTTON_PINS ]
+expanders = constants.get_expanders()
+
+buttons = []
+for index, pin in enumerate(constants.BUTTON_PINS):
+    expander = expanders[ pin // 8 ]
+    pin_number = pin % 8
+    btn = Button(index, expander, pin_number)
+    buttons.append(btn)
 
 print("Polling...")
 while True:
