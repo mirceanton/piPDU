@@ -2,7 +2,7 @@ import utils.constants as constants
 import utils.socket as socket
 from pcf8574 import PCF8574
 import datetime
-import os
+
 
 class Button:
     def poll(self) -> None:
@@ -51,7 +51,8 @@ class Button:
     def __held_threshold_passed(self) -> bool:
         if self.last_press_time is None:
             return False
-        time_held = (datetime.datetime.now() - self.last_press_time).total_seconds()
+        time_held = (datetime.datetime.now() -
+                     self.last_press_time).total_seconds()
         return time_held > constants.BUTTON_LONG_PRESS_DURATION_SECONDS
 
     def __init__(self, index: int, expander: PCF8574, pin: int):

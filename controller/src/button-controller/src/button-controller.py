@@ -1,6 +1,5 @@
-from utils.button import buttons
-from utils.socket import SocketAPI
 import utils.constants as constants
+from utils.button import Button
 import os
 import time
 
@@ -11,13 +10,14 @@ if not os.path.exists(constants.FIFO):
 print(f'INFO: Initializing PCF expanders')
 expanders = constants.get_expanders()
 
+
 print(f'INFO: Initializing buttons arrray')
 buttons = []
 for index, pin in enumerate(constants.BUTTON_PINS):
     btn = Button(
-        index = index,
-        expander = expanders[ pin // 8 ],
-        pin = pin % 8,
+        index=index,
+        expander=expanders[pin // 8],
+        pin=pin % 8,
     )
     buttons.append(btn)
 
