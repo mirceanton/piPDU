@@ -6,15 +6,13 @@ stages:
   - test
   - build
 
-before_script:
-  - cd ./controller/src/display-controller
-
 # =================================================================================================
 # LINTING STAGE
 # =================================================================================================
 display-controller/flake8:
   stage: lint
   script:
+    - cd ./controller/src/display-controller
     - pip3 install -r requirements-dev.txt
     - flake8 --max-line-length=120 ./src/*
 
@@ -24,6 +22,7 @@ display-controller/flake8:
 display-controller/pytest:
   stage: test
   script:
+    - cd ./controller/src/display-controller
     - pip3 install -r requirements.txt
     - pip3 install -r requirements-dev.txt
     - pytest tests/*
@@ -42,6 +41,7 @@ display-controller/docker/arm/v6:
   services:
     - docker:dind
   script:
+    - cd ./controller/src/display-controller
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN
     - if [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then TAG=$(cat VERSION); else TAG=$(echo $CI_COMMIT_BRANCH | tr '/' '-'); fi
     - docker buildx create --use
@@ -53,6 +53,7 @@ display-controller/docker/arm/v7:
   services:
     - docker:dind
   script:
+    - cd ./controller/src/display-controller
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN
     - if [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then TAG=$(cat VERSION); else TAG=$(echo $CI_COMMIT_BRANCH | tr '/' '-'); fi
     - docker buildx create --use
@@ -64,6 +65,7 @@ display-controller/docker/arm64:
   services:
     - docker:dind
   script:
+    - cd ./controller/src/display-controller
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN
     - if [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then TAG=$(cat VERSION); else TAG=$(echo $CI_COMMIT_BRANCH | tr '/' '-'); fi
     - docker buildx create --use
