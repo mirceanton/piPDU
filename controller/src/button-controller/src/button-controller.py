@@ -7,11 +7,11 @@ print(f'INFO: Creating named pipe {constants.FIFO}')
 if not os.path.exists(constants.FIFO):
     os.mkfifo(constants.FIFO)
 
-print(f'INFO: Initializing PCF expanders')
+print('INFO: Initializing PCF expanders')
 expanders = constants.get_expanders()
 
 
-print(f'INFO: Initializing buttons arrray')
+print('INFO: Initializing buttons arrray')
 buttons = []
 for index, pin in enumerate(constants.BUTTON_PINS):
     btn = Button(

@@ -5,7 +5,7 @@ import time
 import json
 import os
 
-print(f'DEBUG: Initializing LCD display')
+print('DEBUG: Initializing LCD display')
 display = Display(
     expander=constants.DISPLAY_I2C_EXPANDER,
     i2c_bus=constants.DISPLAY_I2C_BUS,
@@ -17,7 +17,7 @@ print(f'DEBUG: Creating named pipe {constants.FIFO}')
 if not os.path.exists(constants.FIFO):
     os.mkfifo(constants.FIFO)
 
-print(f'DEBUG: Opening named pipe in read-only mode')
+print('DEBUG: Opening named pipe in read-only mode')
 pipe = open(constants.FIFO, 'r')
 
 
@@ -43,13 +43,13 @@ def pipe_message_callback(body):
     display.set_state(state, socket)
 
 
-print(f'INFO: Starting main loop')
+print('INFO: Starting main loop')
 try:
     while True:
         pipe_message_callback(pipe.read())
         display.update(scrape_metrics(constants.METRICS_ENDPOINT_URL))
         time.sleep(constants.METRICS_POLL_INTERVAL_SECONDS)
 except KeyboardInterrupt:
-    print(f'INFO: Received Keyboard Interrupt')
+    print('INFO: Received Keyboard Interrupt')
     display.close()
     pipe.close()

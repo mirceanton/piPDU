@@ -27,7 +27,7 @@ def __turn_off(id: int) -> None:
 
 
 def toggle(id: int) -> None:
-    if __get_state(id) == True:
+    if __get_state(id):
         __turn_off(id)
     else:
         __turn_on(id)
