@@ -1,3 +1,5 @@
 ---
 include:
-  local: 'controller/src/led-controller/.gitlab-ci.yml'
+  - local: 'controller/src/button-controller/.gitlab-ci.yml'
+  - local: 'controller/src/display-controller/.gitlab-ci.yml'
+  - local: 'controller/src/led-controller/.gitlab-ci.yml'
