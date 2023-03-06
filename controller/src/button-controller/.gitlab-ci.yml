@@ -12,7 +12,7 @@ before_script:
 # =================================================================================================
 # LINTING STAGE
 # =================================================================================================
-display-controller/flake8:
+button-controller/flake8:
   stage: lint
   script:
     - pip3 install -r requirements-dev.txt
@@ -21,7 +21,7 @@ display-controller/flake8:
 # =================================================================================================
 # TESTING STAGE
 # =================================================================================================
-display-controller/pytest:
+button-controller/pytest:
   stage: test
   script:
     - pip3 install -r requirements.txt
@@ -36,7 +36,7 @@ variables:
   DOCKER_DRIVER: overlay2
   IMAGE_NAME: antonmircea/pipdu-button-controller
 
-display-controller/docker/arm/v6:
+button-controller/docker/arm/v6:
   stage: build
   image: jdrouet/docker-with-buildx:stable
   services:
@@ -47,7 +47,7 @@ display-controller/docker/arm/v6:
     - docker buildx create --use
     - docker buildx build --platform linux/arm/v6 --tag $IMAGE_NAME:$TAG . --push
 
-display-controller/docker/arm/v7:
+button-controller/docker/arm/v7:
   stage: build
   image: jdrouet/docker-with-buildx:stable
   services:
@@ -58,7 +58,7 @@ display-controller/docker/arm/v7:
     - docker buildx create --use
     - docker buildx build --platform linux/arm/v7 --tag $IMAGE_NAME:$TAG .
 
-display-controller/docker/arm64:
+button-controller/docker/arm64:
   stage: build
   image: jdrouet/docker-with-buildx:stable
   services:
