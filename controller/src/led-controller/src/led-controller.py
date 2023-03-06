@@ -2,10 +2,10 @@ import utils.constants as constants
 import utils.led as led
 import time
 
-print(f'INFO: Initializing PCF expanders')
+print('INFO: Initializing PCF expanders')
 expanders = constants.get_expanders()
 
-print(f'INFO: Starting main loop')
+print('INFO: Starting main loop')
 try:
     while True:
         for index, pin in enumerate(constants.LED_PINS):
@@ -16,4 +16,4 @@ try:
             )
         time.sleep(constants.LED_UPDATE_INTERVAL_SECONDS)
 except KeyboardInterrupt:
-    print(f'INFO: Received Keyboard Interrupt')
+    print('INFO: Received Keyboard Interrupt')
