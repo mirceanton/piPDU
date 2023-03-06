@@ -22,8 +22,9 @@ pytest:
     - pip3 install -r requirements-dev.txt
     - pytest tests/*
 
-build:
+arm/v6:
   stage: build
+  image: jdrouet/docker-with-buildx:stable
   services:
     - docker:dind
   variables:
@@ -31,4 +32,28 @@ build:
     DOCKER_DRIVER: overlay2
   script:
     - docker buildx create --use
-    - docker buildx build --platform linux/arm/v6,linux/arm/v7,linux/arm64 --tag antonmircea/pipdu-led-controller:1.0.0 .
+    - docker buildx build --platform linux/arm/v6 --tag antonmircea/pipdu-led-controller:1.0.0 .
+
+arm/v7:
+  stage: build
+  image: jdrouet/docker-with-buildx:stable
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
+  script:
+    - docker buildx create --use
+    - docker buildx build --platform linux/arm/v7 --tag antonmircea/pipdu-led-controller:1.0.0 .
+
+arm64:
+  stage: build
+  image: jdrouet/docker-with-buildx:stable
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
+  script:
+    - docker buildx create --use
+    - docker buildx build --platform linux/arm64 --tag antonmircea/pipdu-led-controller:1.0.0 .
