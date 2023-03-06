@@ -6,8 +6,10 @@ EXPANDER_I2C_ADDR = [ int(x, 16) for x in os.environ.get('EXPANDER_I2C_ADDR').sp
 
 BUTTON_LONG_PRESS_DURATION_SECONDS = int(os.environ.get('LONG_PRESS_DURATION_SECONDS', '5'))
 BUTTON_PINS = [ int(pin) for pin in os.environ.get('BUTTON_PINS', '1,3,5,7,9,11,13,15,0,2,4,6,8,10,12').split(",") ]
+BUTTON_POLL_INTERVAL_SECONDS = int(os.environ.get('BUTTON_POLL_INTERVAL_SECONDS', '1'))
 
 PIPDU_SERVER_ADDRESS = os.environ.get('PIPDU_SERVER_ADDRESS')
+FIFO = os.environ.get('FIFO', '/tmp/display_fifo')
 
 def get_expanders():
   if len(EXPANDER_I2C_BUS) < 1:
