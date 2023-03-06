@@ -1,19 +1,33 @@
 ---
-image: jdrouet/docker-with-buildx:stable
+image: python:3.9
 
-variables:
-  DOCKER_HOST: tcp://docker:2375/
-  DOCKER_DRIVER: overlay2
-
-services:
-  - docker:dind
-
+stages:
+  - lint
+  - test
+  - build
 
 before_script:
   - cd ./controller/src/led-controller
 
+flake8:
+  stage: lint
+  script:
+    - pip3 install flake8
+    - flake8 --max-line-length=120 ./src/*
+
+pytest:
+  stage: test
+  script:
+    - pip3 install -r requirements.txt
+    - pytest tests/*
+
 build:
   stage: build
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
   script:
     - docker buildx create --use
-    - docker buildx build --platform linux/arm/v6,linux/arm/v7,linux/arm64 --tag antonmircea/pipdu-led-controller:1.0.0-rc01 .
+    - docker buildx build --platform linux/arm/v6,linux/arm/v7,linux/arm64 --tag antonmircea/pipdu-led-controller:1.0.0 .
