@@ -43,7 +43,7 @@ arm/v6:
     - docker:dind
   script:
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN
-    - if [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then TAG=$(cat VERSION); else TAG=$CI_COMMIT_BRANCH; fi
+    - if [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then TAG=$(cat VERSION); else TAG=$(echo $CI_COMMIT_BRANCH | tr '/' '-'); fi
     - docker buildx create --use
     - docker buildx build --platform linux/arm/v6 --tag $IMAGE_NAME:$TAG . --push
 
@@ -54,7 +54,7 @@ arm/v7:
     - docker:dind
   script:
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN
-    - if [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then TAG=$(cat VERSION); else TAG=$CI_COMMIT_BRANCH; fi
+    - if [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then TAG=$(cat VERSION); else TAG=$(echo $CI_COMMIT_BRANCH | tr '/' '-'); fi
     - docker buildx create --use
     - docker buildx build --platform linux/arm/v7 --tag $IMAGE_NAME:$TAG .
 
@@ -65,6 +65,6 @@ arm64:
     - docker:dind
   script:
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN
-    - if [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then TAG=$(cat VERSION); else TAG=$CI_COMMIT_BRANCH; fi
+    - if [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then TAG=$(cat VERSION); else TAG=$(echo $CI_COMMIT_BRANCH | tr '/' '-'); fi
     - docker buildx create --use
     - docker buildx build --platform linux/arm64 --tag $IMAGE_NAME:$TAG .
