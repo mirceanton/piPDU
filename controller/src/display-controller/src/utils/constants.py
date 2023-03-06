@@ -3,15 +3,9 @@ import os
 DISPLAY_I2C_EXPANDER = os.environ.get('DISPLAY_I2C_EXPANDER', 'PCF8574')
 DISPLAY_I2C_BUS = int(os.environ.get('DISPLAY_I2C_BUS'))
 DISPLAY_I2C_ADDR = int(os.environ.get('DISPLAY_I2C_ADDR'), 16)
-DISPLAY_BACKLIGHT_ENABLED = bool(os.environ.get('DISPLAY_BACKLIGHT_ENABLED'))
+DISPLAY_BACKLIGHT_ENABLED = bool(os.environ.get('DISPLAY_BACKLIGHT_ENABLED', 'True'))
 
-RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST', 'rabbitmq')
-RABBITMQ_PORT = os.environ.get('RABBITMQ_PORT', '5672')
-RABBITMQ_PATH = os.environ.get('RABBITMQ_PATH', '/')
-RABBITMQ_USER = os.environ.get('RABBITMQ_USER')
-RABBITMQ_PASS = os.environ.get('RABBITMQ_PASS')
-RABBITMQ_DISPLAY_QUEUE = os.environ.get('RABBITMQ_DISPLAY_QUEUE', 'lcd')
-RABBITMQ_CONSUMER_TAG = os.environ.get('RABBITMQ_CONSUMER_TAG', 'display_controller')
-
-METRICS_POLL_INTERVAL_SECONDS = int(os.environ.get('METRICS_POLL_INTERVAL_SECONDS'))
+METRICS_POLL_INTERVAL_SECONDS = int(os.environ.get('METRICS_POLL_INTERVAL_SECONDS', '1'))
 METRICS_ENDPOINT_URL = os.environ.get('METRICS_ENDPOINT_URL')
+
+FIFO = '/tmp/display_fifo'

@@ -1,11 +1,10 @@
 import utils.constants as constants
 from utils.metrics import scrape_metrics
-from utils.rabbitmq import RabbitMQ
-from utils.display import Display
+from utils.display import Display, DisplayState
+import time
+import json
 
-# =================================================================================================
-# LCD SETUP
-# =================================================================================================
+print(f'DEBUG: Initializing LCD display')
 display = Display(
     expander = constants.DISPLAY_I2C_EXPANDER,
     i2c_bus = constants.DISPLAY_I2C_BUS,
@@ -13,53 +12,39 @@ display = Display(
     backlight = constants.DISPLAY_BACKLIGHT_ENABLED
 )
 
+print(f'DEBUG: Creating named pipe {constants.FIFO}')
+if not os.path.exists(constants.FIFO):
+    os.mkfifo(constants.FIFO)
 
-# =================================================================================================
-# RABBITMQ SETUP
-# =================================================================================================
-rabbitmq = RabbitMQ(
-    username = constants.RABBITMQ_USER,
-    password = constants.RABBITMQ_PASS,
-    host = constants.RABBITMQ_HOST,
-    port = constants.RABBITMQ_PORT,
-    path = constants.RABBITMQ_PATH
-)
-rabbitmq.declareQueue(constants.RABBITMQ_DISPLAY_QUEUE)
+print(f'DEBUG: Opening named pipe in read-only mode')
+pipe = open(constants.FIFO, 'r')
 
-def queue_message_callback(body):
-    data = json.loads(body.decode('utf-8'))
-    print(f'INFO: Got message from queue: {data}')
-
-    state = data['state'].upper()
-    socket = int(data['socket']) if data['socket'] is not None else None
-
-    if state == "IDLE" and socket is None:
-        display.state = "IDLE"
+def pipe_message_callback(body):
+    if len(body) == 0:
         return
 
-    if state == "INFO" and (0 <= socket < 16):
-        display.state = "INFO"
-        display.socket = socket
-        return
+    print(f'DEBUG: Got message from pipe: {body}')
+    data = json.loads(body)
+    print(f'DEBUG: Parsed JSON as: {data}')
 
-    raise ValueError(f'Poorly formatted message: {data}')
+    state = DisplayState[data['state'].upper()]
+    socket = int(data['socket']) if 'socket' in data else None
 
+    if state == DisplayState.IDLE and socket is not None:
+        raise ValueError(f'Poorly formatted message; No socket should be set for IDLE state: {data}')
 
-# =================================================================================================
-# ENTRYPOINT
-# =================================================================================================
+    if state == DisplayState.INFO and not (0 <= socket < 16):
+        raise ValueError(f'Poorly formatted message; Invalid socket number for INFO state: {data}')
+
+    display.set_state(state, socket)
+
+print(f'INFO: Starting main loop')
 try:
     while True:
-        if rabbitmq.has_message(queue = constants.RABBITMQ_DISPLAY_QUEUE):
-            rabbitmq.consume(
-                queue = constants.RABBITMQ_DISPLAY_QUEUE,
-                callback = queue_message_callback
-            )
-            
+        pipe_message_callback( pipe.read() )
         display.update( scrape_metrics(constants.METRICS_ENDPOINT_URL) )
-
         time.sleep(constants.METRICS_POLL_INTERVAL_SECONDS)
-
 except KeyboardInterrupt:
     print(f'INFO: Received Keyboard Interrupt')
-    rabbitmq.close()
+    display.close()
+    pipe.close()
