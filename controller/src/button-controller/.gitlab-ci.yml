@@ -1,0 +1,70 @@
+---
+image: python:3.9
+
+stages:
+  - lint
+  - test
+  - build
+
+before_script:
+  - cd ./controller/src/button-controller
+
+# =================================================================================================
+# LINTING STAGE
+# =================================================================================================
+flake8:
+  stage: lint
+  script:
+    - pip3 install -r requirements-dev.txt
+    - flake8 --max-line-length=120 ./src/*
+
+# =================================================================================================
+# TESTING STAGE
+# =================================================================================================
+pytest:
+  stage: test
+  script:
+    - pip3 install -r requirements.txt
+    - pip3 install -r requirements-dev.txt
+    - pytest tests/*
+
+# =================================================================================================
+# BUILDING STAGE
+# =================================================================================================
+variables:
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_DRIVER: overlay2
+  IMAGE_NAME: antonmircea/pipdu-button-controller
+
+arm/v6:
+  stage: build
+  image: jdrouet/docker-with-buildx:stable
+  services:
+    - docker:dind
+  script:
+    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN
+    - if [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then TAG=$(cat VERSION); else TAG=$CI_COMMIT_BRANCH; fi
+    - docker buildx create --use
+    - docker buildx build --platform linux/arm/v6 --tag $IMAGE_NAME:$TAG . --push
+
+arm/v7:
+  stage: build
+  image: jdrouet/docker-with-buildx:stable
+  services:
+    - docker:dind
+  script:
+    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN
+    - if [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then TAG=$(cat VERSION); else TAG=$CI_COMMIT_BRANCH; fi
+    - docker buildx create --use
+    - docker buildx build --platform linux/arm/v7 --tag $IMAGE_NAME:$TAG .
+
+arm64:
+  stage: build
+  image: jdrouet/docker-with-buildx:stable
+  services:
+    - docker:dind
+  script:
+    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN
+    - if [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then TAG=$(cat VERSION); else TAG=$CI_COMMIT_BRANCH; fi
+    - docker buildx create --use
+    - docker buildx build --platform linux/arm64 --tag $IMAGE_NAME:$TAG .
