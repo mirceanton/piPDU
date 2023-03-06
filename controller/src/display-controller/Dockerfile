@@ -4,7 +4,7 @@ FROM python:3.9.16-alpine
 WORKDIR /app
 
 # Install prerequisites
-RUN apk update && apk add python3-dev gcc libc-dev linux-headers
+RUN apk update && apk add python3-dev gcc libc-dev linux-headers libffi-dev
 
 # Upgrade pip and install dependencies
 COPY requirements.txt .
