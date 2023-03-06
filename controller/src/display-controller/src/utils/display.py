@@ -60,7 +60,7 @@ class Display:
             return False
         state_time = (datetime.datetime.now() -
                       self.last_state_change_time).total_seconds()
-        return state_time > constants.LCD_INFO_STATE_DURATION_SECONDS
+        return state_time > constants.DISPLAY_INFO_STATE_DURATION_SECONDS
 
     def close(self):
         if self.device is not None:

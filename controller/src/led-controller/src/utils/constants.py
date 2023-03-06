@@ -5,7 +5,6 @@ EXPANDER_I2C_BUS = [ int(x) for x in os.environ.get('EXPANDER_I2C_BUS').split(",
 EXPANDER_I2C_ADDR = [ int(x, 16) for x in os.environ.get('EXPANDER_I2C_ADDR').split(",") ]
 
 LED_PINS = [ int(pin) for pin in os.environ.get('BUTTON_PINS', '1,3,5,7,9,11,13,15,0,2,4,6,8,10,12').split(",") ]
-LED_POLLING_INTERVAL_SECONDS = int( os.environ.get('LED_POLLING_INTERVAL_SECONDS', '0') )
 LED_UPDATE_INTERVAL_SECONDS = int( os.environ.get('LED_UPDATE_INTERVAL_SECONDS', '1') )
 PIPDU_SERVER_ADDRESS = os.environ.get('PIPDU_SERVER_ADDRESS')
 
