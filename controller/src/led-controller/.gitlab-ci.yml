@@ -14,5 +14,8 @@ led-controller/flake8:
 led-controller/pytest:
   extends: .pytest
 
-led-controller/docker-build:
-  extends: .docker-build
+led-controller/docker-build-mr:
+  extends: .docker-build-mr
+
+led-controller/docker-build-release:
+  extends: .docker-build-release

@@ -14,5 +14,8 @@ button-controller/flake8:
 button-controller/pytest:
   extends: .pytest
 
-button-controller/docker-build:
-  extends: .docker-build
+button-controller/docker-build-mr:
+  extends: .docker-build-mr
+
+button-controller/docker-build-release:
+  extends: .docker-build-release

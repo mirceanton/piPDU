@@ -14,5 +14,8 @@ display-controller/flake8:
 display-controller/pytest:
   extends: .pytest
 
-display-controller/docker-build:
-  extends: .docker-build
+display-controller/docker-build-mr:
+  extends: .docker-build-mr
+
+display-controller/docker-build-release:
+  extends: .docker-build-release
