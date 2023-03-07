@@ -1,0 +1,56 @@
+---
+
+before_script:
+  - cd $CI_SERVICE_REPO
+
+# =================================================================================================
+# LINTING STAGE
+# =================================================================================================
+$CI_SERVICE_REPO/flake8:
+  stage: lint
+  image: python:3.9
+  script:
+    - pip3 install -r requirements-dev.txt
+    - flake8 --max-line-length=120 ./src/*
+  rules:
+    - changes:
+      - $CI_SERVICE_REPO/src/**/*  # if source code has changed
+
+# =================================================================================================
+# TESTING STAGE
+# =================================================================================================
+$CI_SERVICE_REPO/pytest:
+  stage: test
+  image: python:3.9
+  script:
+    - pip3 install -r requirements.txt
+    - pip3 install -r requirements-dev.txt
+    - pytest tests/*
+  rules:
+    changes:
+      - $CI_SERVICE_REPO/src/**/*        # if source code has changed
+      - $CI_SERVICE_REPO/requirements*   # if the dependencies have changed
+      - $CI_SERVICE_REPO/tests/**/*      # if tests have changed
+
+# =================================================================================================
+# BUILDING STAGE
+# =================================================================================================
+$CI_SERVICE_REPO/docker-build:
+  stage: build
+  image: jdrouet/docker-with-buildx:stable
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
+  script:
+    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN
+    - if [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then TAG=$(cat VERSION); else TAG=$(echo $CI_COMMIT_BRANCH | tr '/' '-'); fi
+    - docker buildx create --use
+    - docker buildx build --platform linux/arm/v6,linux/arm/v7,linux/arm64,linux/amd64 --tag $DOCKERHUB_USER/$IMAGE_NAME:$TAG . --push
+  rules:
+    changes:
+      - $CI_SERVICE_REPO/src/**/*          # if any source code has changed
+      - $CI_SERVICE_REPO/requirements.txt  # if the dependencies have changed
+      - $CI_SERVICE_REPO/Dockerfile        # if the dockerfile has changed
+      - $CI_SERVICE_REPO/VERSION           # if the version file has changed
