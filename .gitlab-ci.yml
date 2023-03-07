@@ -1,16 +1,10 @@
 ---
+stages:
+  - lint
+  - test
+  - build
+
 include:
   - local: 'controller/src/button-controller/.gitlab-ci.yml'
-    rules:
-      - changes:
-        - controller/src/button-controller/**/*
-
   - local: 'controller/src/display-controller/.gitlab-ci.yml'
-    rules:
-      - changes:
-        - controller/src/display-controller/**/*
-
   - local: 'controller/src/led-controller/.gitlab-ci.yml'
-    rules:
-      - changes:
-        - controller/src/led-controller/**/*

@@ -1,14 +1,6 @@
 ---
-image: python:3.9
-
-stages:
-  - lint
-  - test
-  - build
-
-variables:
-  DOCKER_HOST: tcp://docker:2375/
-  DOCKER_DRIVER: overlay2
+default:
+  image: python:3.9
 
 # =================================================================================================
 # LINTING STAGE
@@ -20,6 +12,9 @@ button-controller/flake8:
   script:
     - pip3 install -r requirements-dev.txt
     - flake8 --max-line-length=120 ./src/*
+  rules:
+    changes:
+      - ./controller/src/button-controller/src/**/*  # if source code has changed
 
 # =================================================================================================
 # TESTING STAGE
@@ -32,45 +27,33 @@ button-controller/pytest:
     - pip3 install -r requirements.txt
     - pip3 install -r requirements-dev.txt
     - pytest tests/*
+  rules:
+    changes:
+      - ./controller/src/button-controller/src/**/*        # if source code has changed
+      - ./controller/src/button-controller/requirements*   # if the dependencies have changed
+      - ./controller/src/button-controller/tests/**/*      # if tests have changed
 
 # =================================================================================================
 # BUILDING STAGE
 # =================================================================================================
-button-controller/docker/arm/v6:
+button-controller/docker-build:
   stage: build
   image: jdrouet/docker-with-buildx:stable
   services:
     - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
   before_script:
     - cd ./controller/src/button-controller
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN
   script:
     - if [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then TAG=$(cat VERSION); else TAG=$(echo $CI_COMMIT_BRANCH | tr '/' '-'); fi
     - docker buildx create --use
-    - docker buildx build --platform linux/arm/v6 --tag antonmircea/pipdu-button-controller:$TAG . --push
-
-button-controller/docker/arm/v7:
-  stage: build
-  image: jdrouet/docker-with-buildx:stable
-  services:
-    - docker:dind
-  before_script:
-    - cd ./controller/src/button-controller
-    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN
-  script:
-    - if [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then TAG=$(cat VERSION); else TAG=$(echo $CI_COMMIT_BRANCH | tr '/' '-'); fi
-    - docker buildx create --use
-    - docker buildx build --platform linux/arm/v7 --tag antonmircea/pipdu-button-controller:$TAG .
-
-button-controller/docker/arm64:
-  stage: build
-  image: jdrouet/docker-with-buildx:stable
-  services:
-    - docker:dind
-  before_script:
-    - cd ./controller/src/button-controller
-    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN
-  script:
-    - if [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then TAG=$(cat VERSION); else TAG=$(echo $CI_COMMIT_BRANCH | tr '/' '-'); fi
-    - docker buildx create --use
-    - docker buildx build --platform linux/arm64 --tag antonmircea/pipdu-button-controller:$TAG .
+    - docker buildx build --platform linux/arm/v6,linux/arm/v7,linux/arm64,linux/amd64 --tag antonmircea/pipdu-button-controller:$TAG . --push
+  rules:
+    changes:
+      - ./controller/src/button-controller/src/**/*          # if any source code has changed
+      - ./controller/src/button-controller/requirements.txt  # if the dependencies have changed
+      - ./controller/src/button-controller/Dockerfile        # if the dockerfile has changed
+      - ./controller/src/button-controller/VERSION           # if the version file has changed

@@ -1,14 +1,6 @@
 ---
-image: python:3.9
-
-stages:
-  - lint
-  - test
-  - build
-
-variables:
-  DOCKER_HOST: tcp://docker:2375/
-  DOCKER_DRIVER: overlay2
+default:
+  image: python:3.9
 
 # =================================================================================================
 # LINTING STAGE
@@ -20,6 +12,9 @@ display-controller/flake8:
   script:
     - pip3 install -r requirements-dev.txt
     - flake8 --max-line-length=120 ./src/*
+  rules:
+    changes:
+      - ./controller/src/display-controller/src/**/*  # if source code has changed
 
 # =================================================================================================
 # TESTING STAGE
@@ -32,45 +27,33 @@ display-controller/pytest:
     - pip3 install -r requirements.txt
     - pip3 install -r requirements-dev.txt
     - pytest tests/*
+  rules:
+    changes:
+      - ./controller/src/display-controller/src/**/*        # if source code has changed
+      - ./controller/src/display-controller/requirements*   # if the dependencies have changed
+      - ./controller/src/display-controller/tests/**/*      # if tests have changed
 
 # =================================================================================================
 # BUILDING STAGE
 # =================================================================================================
-display-controller/docker/arm/v6:
+display-controller/docker-build:
   stage: build
   image: jdrouet/docker-with-buildx:stable
   services:
     - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
   before_script:
     - cd ./controller/src/display-controller
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN
   script:
     - if [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then TAG=$(cat VERSION); else TAG=$(echo $CI_COMMIT_BRANCH | tr '/' '-'); fi
     - docker buildx create --use
-    - docker buildx build --platform linux/arm/v6 --tag antonmircea/pipdu-display-controller:$TAG . --push
-
-display-controller/docker/arm/v7:
-  stage: build
-  image: jdrouet/docker-with-buildx:stable
-  services:
-    - docker:dind
-  before_script:
-    - cd ./controller/src/display-controller
-    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN
-  script:
-    - if [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then TAG=$(cat VERSION); else TAG=$(echo $CI_COMMIT_BRANCH | tr '/' '-'); fi
-    - docker buildx create --use
-    - docker buildx build --platform linux/arm/v7 --tag antonmircea/pipdu-display-controller:$TAG .
-
-display-controller/docker/arm64:
-  stage: build
-  image: jdrouet/docker-with-buildx:stable
-  services:
-    - docker:dind
-  before_script:
-    - cd ./controller/src/display-controller
-    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN
-  script:
-    - if [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then TAG=$(cat VERSION); else TAG=$(echo $CI_COMMIT_BRANCH | tr '/' '-'); fi
-    - docker buildx create --use
-    - docker buildx build --platform linux/arm64 --tag antonmircea/pipdu-display-controller:$TAG .
+    - docker buildx build --platform linux/arm/v6,linux/arm/v7,linux/arm64,linux/amd64 --tag antonmircea/pipdu-display-controller:$TAG . --push
+  rules:
+    changes:
+      - ./controller/src/display-controller/src/**/*          # if any source code has changed
+      - ./controller/src/display-controller/requirements.txt  # if the dependencies have changed
+      - ./controller/src/display-controller/Dockerfile        # if the dockerfile has changed
+      - ./controller/src/display-controller/VERSION           # if the version file has changed
