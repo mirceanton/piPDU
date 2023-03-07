@@ -1,0 +1,38 @@
+---
+.docker-build-base:
+  image: jdrouet/docker-with-buildx:stable
+  stage: build
+
+  script:
+    - cd $CI_SERVICE_REPO
+    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN
+    - docker buildx create --use
+    - docker buildx build --platform linux/arm/v6,linux/arm/v7,linux/arm64,linux/amd64 --tag $DOCKERHUB_USER/$IMAGE_NAME:$IMAGE_TAG . --push
+
+.docker-build-mr:
+  extends: .docker-build-base
+
+  variables:
+    IMAGE_TAG: mr-$CI_MERGE_REQUEST_IID
+
+  rules:
+  - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    changes:
+    - $CI_SERVICE_REPO/src/**/*          # if any source code has changed
+    - $CI_SERVICE_REPO/requirements.txt  # if the dependencies have changed
+    - $CI_SERVICE_REPO/Dockerfile        # if the dockerfile has changed
+    - $CI_SERVICE_REPO/VERSION           # if the version file has changed
+
+.docker-build-release:
+  extends: .docker-build-base
+  
+  before_script:
+    - export IMAGE_TAG=$(cat VERSION)
+
+  rules:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    changes:
+    - $CI_SERVICE_REPO/src/**/*          # if any source code has changed
+    - $CI_SERVICE_REPO/requirements.txt  # if the dependencies have changed
+    - $CI_SERVICE_REPO/Dockerfile        # if the dockerfile has changed
+    - $CI_SERVICE_REPO/VERSION           # if the version file has changed
