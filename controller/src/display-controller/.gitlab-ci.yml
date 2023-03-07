@@ -1,0 +1,28 @@
+---
+include: 
+  - '.gitlab/templates/lint.gitlab-ci.yml'
+  - '.gitlab/templates/test.gitlab-ci.yml'
+  - '.gitlab/templates/docker-build.gitlab-ci.yml'
+
+
+display-controller/flake8:
+  extends: .flake8
+  variables:
+    CI_SERVICE_REPO: controller/src/display-controller
+
+display-controller/pytest:
+  extends: .pytest
+  variables:
+    CI_SERVICE_REPO: controller/src/display-controller
+
+display-controller/docker-build-mr:
+  extends: .docker-build-mr
+  variables:
+    CI_SERVICE_REPO: controller/src/display-controller
+    IMAGE_NAME: pipdu-display-controller
+
+display-controller/docker-build-release:
+  extends: .docker-build-release
+  variables:
+    CI_SERVICE_REPO: controller/src/display-controller
+    IMAGE_NAME: pipdu-display-controller
