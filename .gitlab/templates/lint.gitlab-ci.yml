@@ -3,13 +3,11 @@
   stage: lint
   image: python:3.9
   rules:
-    - changes:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      changes:
       - $CI_SERVICE_REPO/src/**/*
 
-  before_script:
-    - cd $CI_SERVICE_REPO
-
   script:
+    - cd $CI_SERVICE_REPO
     - pip3 install -r requirements-dev.txt
     - flake8 --max-line-length=120 ./src/*
-
