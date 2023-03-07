@@ -4,7 +4,6 @@ version: '2.2'
 services:
   button-controller:
     image: antonmircea/pipdu-button-controller
-    build: ./button-controller
     restart: unless-stopped
     environment:
       EXPANDER_I2C_BUS: 3
@@ -16,7 +15,6 @@ services:
 
   display-controller:
     image: antonmircea/pipdu-display-controller
-    build: ./display-controller
     restart: unless-stopped
     environment:
       DISPLAY_I2C_BUS: 1
@@ -27,7 +25,6 @@ services:
 
   led-controller:
     image: antonmircea/pipdu-led-controller
-    build: ./led-controller
     restart: unless-stopped
     environment:
       EXPANDER_I2C_BUS: 2

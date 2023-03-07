@@ -4,7 +4,6 @@ version: '2.2'
 services:
   arduino-uploader:
     image: antonmircea/pipdu-arduino-uploader
-    build: ./arduino
     restart: on-failure
     privileged: true
 
@@ -29,7 +28,6 @@ services:
 
   serial-router:
     image: antonmircea/pipdu-serial-router
-    build: ./serial-router
     restart: always
     privileged: true
     environment:
@@ -41,7 +39,6 @@ services:
 
   metrics-server:
     image: antonmircea/pipdu-metrics-server
-    build: ./metrics-server
     restart: unless-stopped
     environment:
       RABBITMQ_USER: user123
@@ -54,7 +51,6 @@ services:
 
   api-server:
     image: antonmircea/pipdu-api-server
-    build: api-server
     restart: unless-stopped
     environment:
       RABBITMQ_USER: user123
