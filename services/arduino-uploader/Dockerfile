@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM debian:sid-slim
 
 # Install the required packages
 RUN apt update && apt upgrade -y
