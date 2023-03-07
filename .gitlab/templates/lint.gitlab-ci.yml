@@ -1,0 +1,14 @@
+.flake8:
+  stage: lint
+  image: python:3.9
+  rules:
+    - changes:
+      - $CI_SERVICE_REPO/src/**/*
+
+  before_script:
+    - cd $CI_SERVICE_REPO
+
+  script:
+    - pip3 install -r requirements-dev.txt
+    - flake8 --max-line-length=120 ./src/*
+

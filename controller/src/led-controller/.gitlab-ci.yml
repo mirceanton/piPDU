@@ -1,6 +1,17 @@
 ---
-include: '.gitlab/templates/sample.gitlab-ci.yml'
+include: '.gitlab/templates/lint.gitlab-ci.yml'
+include: '.gitlab/templates/test.gitlab-ci.yml'
+include: '.gitlab/templates/docker-build.gitlab-ci.yml'
 
 variables:
   CI_SERVICE_REPO: controller/src/led-controller
   IMAGE_NAME: pipdu-led-controller
+
+led-controller/flake8:
+  extends: .flake8
+
+led-controller/pytest:
+  extends: .pytest
+
+led-controller/docker-build:
+  extends: .docker-build

@@ -1,0 +1,17 @@
+---
+.pytest:
+  stage: test
+  image: python:3.9
+  rules:
+    - changes:
+      - $CI_SERVICE_REPO/src/**/*        # if source code has changed
+      - $CI_SERVICE_REPO/requirements*   # if the dependencies have changed
+      - $CI_SERVICE_REPO/tests/**/*      # if tests have changed
+
+  before_script:
+    - cd $CI_SERVICE_REPO
+
+  script:
+    - pip3 install -r requirements.txt
+    - pip3 install -r requirements-dev.txt
+    - pytest tests/*

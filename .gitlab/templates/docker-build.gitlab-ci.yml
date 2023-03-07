@@ -1,0 +1,26 @@
+---
+.docker-build:
+  stage: build
+  image: jdrouet/docker-with-buildx:stable
+  rules:
+  - changes:
+    - $CI_SERVICE_REPO/src/**/*          # if any source code has changed
+    - $CI_SERVICE_REPO/requirements.txt  # if the dependencies have changed
+    - $CI_SERVICE_REPO/Dockerfile        # if the dockerfile has changed
+    - $CI_SERVICE_REPO/VERSION           # if the version file has changed
+
+  services:
+    - docker:dind
+
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
+
+  before_script:
+    - cd $CI_SERVICE_REPO
+
+  script:
+    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN
+    - if [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then TAG=$(cat VERSION); else TAG=$(echo $CI_COMMIT_BRANCH | tr '/' '-'); fi
+    - docker buildx create --use
+    - docker buildx build --platform linux/arm/v6,linux/arm/v7,linux/arm64,linux/amd64 --tag $DOCKERHUB_USER/$IMAGE_NAME:$TAG . --push
