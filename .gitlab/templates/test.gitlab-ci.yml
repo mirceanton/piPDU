@@ -19,8 +19,9 @@
       - venv/
 
   before_script:
-    - apt update && apt install -y python3-virtualenv
-    - python3 -m virtualenv venv
+    - python --version
+    - pip install virtualenv
+    - virtualenv venv
     - source venv/bin/activate
 
   script:
