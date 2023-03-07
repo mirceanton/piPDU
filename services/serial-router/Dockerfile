@@ -9,8 +9,8 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 # Copy over the required files into the working directory
-COPY utils/* ./utils/
-COPY router.py .
+COPY src/utils/* ./utils/
+COPY src/router.py .
 
 # Run the Python script
 CMD ["python", "-u", "router.py"]

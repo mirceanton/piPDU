@@ -7,21 +7,21 @@ include:
 button-controller/flake8:
   extends: .flake8
   variables:
-    CI_SERVICE_REPO: controller/src/button-controller
+    CI_SERVICE_REPO: services/button-controller
 
 button-controller/pytest:
   extends: .pytest
   variables:
-    CI_SERVICE_REPO: controller/src/button-controller
+    CI_SERVICE_REPO: services/button-controller
 
 button-controller/docker-build-mr:
   extends: .docker-build-mr
   variables:
-    CI_SERVICE_REPO: controller/src/button-controller
+    CI_SERVICE_REPO: services/button-controller
     IMAGE_NAME: pipdu-button-controller
 
 button-controller/docker-build-release:
   extends: .docker-build-release
   variables:
-    CI_SERVICE_REPO: controller/src/button-controller
+    CI_SERVICE_REPO: services/button-controller
     IMAGE_NAME: pipdu-button-controller

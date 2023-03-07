@@ -9,8 +9,8 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 # Copy the code files to the working directory
-COPY utils/* ./utils/
-COPY metrics.py .
+COPY src/utils/* ./utils/
+COPY src/metrics.py .
 
 # Expose the default port for the Prometheus metrics endpoint
 EXPOSE 8000

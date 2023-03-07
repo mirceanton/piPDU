@@ -7,21 +7,21 @@ include:
 led-controller/flake8:
   extends: .flake8
   variables:
-    CI_SERVICE_REPO: controller/src/led-controller
+    CI_SERVICE_REPO: services/led-controller
 
 led-controller/pytest:
   extends: .pytest
   variables:
-    CI_SERVICE_REPO: controller/src/led-controller
+    CI_SERVICE_REPO: services/led-controller
 
 led-controller/docker-build-mr:
   extends: .docker-build-mr
   variables:
-    CI_SERVICE_REPO: controller/src/led-controller
+    CI_SERVICE_REPO: services/led-controller
     IMAGE_NAME: pipdu-led-controller
 
 led-controller/docker-build-release:
   extends: .docker-build-release
   variables:
-    CI_SERVICE_REPO: controller/src/led-controller
+    CI_SERVICE_REPO: services/led-controller
     IMAGE_NAME: pipdu-led-controller

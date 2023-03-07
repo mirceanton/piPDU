@@ -8,10 +8,10 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 # Copy the code files to the working directory
-COPY utils/* ./utils/
-COPY routes/ping.py ./routes/ping.py
-COPY routes/sockets/*.py ./routes/sockets/
-COPY api.py .
+COPY src/utils/* ./utils/
+COPY src/routes/ping.py ./routes/ping.py
+COPY src/routes/sockets/*.py ./routes/sockets/
+COPY src/api.py .
 
 # Run the Python script
 CMD ["python", "-u", "api.py"]

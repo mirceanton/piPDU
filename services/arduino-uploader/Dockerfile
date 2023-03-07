@@ -13,7 +13,7 @@ RUN arduino-cli core install arduino:avr
 WORKDIR /arduino
 
 # Copy over the files into the working directory
-COPY ./* ./
+COPY src/* ./
 
 # Start the router
 CMD ["make", "all"]

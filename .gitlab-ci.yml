@@ -5,6 +5,10 @@ stages:
   - build
 
 include:
-  - local: 'controller/src/button-controller/.gitlab-ci.yml'
-  - local: 'controller/src/display-controller/.gitlab-ci.yml'
-  - local: 'controller/src/led-controller/.gitlab-ci.yml'
+  - local: 'services/api-server/.gitlab-ci.yml'
+  - local: 'services/arduino-uploader/.gitlab-ci.yml'
+  - local: 'services/button-controller/.gitlab-ci.yml'
+  - local: 'services/display-controller/.gitlab-ci.yml'
+  - local: 'services/led-controller/.gitlab-ci.yml'
+  - local: 'services/metrics-server/.gitlab-ci.yml'
+  - local: 'services/serial-router/.gitlab-ci.yml'
