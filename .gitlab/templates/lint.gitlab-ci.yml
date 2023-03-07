@@ -5,7 +5,20 @@
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       changes:
-      - $CI_SERVICE_REPO/src/**/*
+        - $CI_SERVICE_REPO/src/**/*
+
+  variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+  cache:
+    paths:
+      - .cache/pip
+      - venv/
+
+  before_script:
+    - apt install python3-virtualenv
+    - python3 -m virtualenv venv
+    - source venv/bin/activate
 
   script:
     - cd $CI_SERVICE_REPO
