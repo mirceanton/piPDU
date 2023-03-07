@@ -1,5 +1,5 @@
-import utils.constants as constants
 import pika
+
 
 class RabbitMQ:
     def __init__(self, username, password, host, port, path):
@@ -20,21 +20,21 @@ class RabbitMQ:
             exit(1)
 
     def declareQueue(self, queue: str):
-        self.channel.queue_declare(queue = queue)
+        self.channel.queue_declare(queue=queue)
 
     def setConsumeCallback(self, queue, callback, tag):
         self.channel.basic_consume(
-            queue = queue,
-            on_message_callback = callback,
-            auto_ack = True,
-            exclusive = True,
-            consumer_tag = tag
+            queue=queue,
+            on_message_callback=callback,
+            auto_ack=True,
+            exclusive=True,
+            consumer_tag=tag
         )
 
     def startConsuming(self):
-        print(f'INFO: Serial Router is listening for messages...')
+        print('INFO: Serial Router is listening for messages...')
         self.channel.start_consuming()
-    
+
     def close(self):
-        print(f'INFO: Closing the RabbitMQ Connection.')
+        print('INFO: Closing the RabbitMQ Connection.')
         self.connection.close()

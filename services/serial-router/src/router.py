@@ -5,19 +5,20 @@ import json
 import time
 
 arduino = Arduino(
-    device = constants.SERIAL_DEVICE,
-    baud_rate = constants.SERIAL_BAUDRATE
+    device=constants.SERIAL_DEVICE,
+    baud_rate=constants.SERIAL_BAUDRATE
 )
 
 rabbitmq = RabbitMQ(
-    username = constants.RABBITMQ_USER,
-    password = constants.RABBITMQ_PASS,
-    host = constants.RABBITMQ_HOST,
-    port = constants.RABBITMQ_PORT,
-    path = constants.RABBITMQ_PATH
+    username=constants.RABBITMQ_USER,
+    password=constants.RABBITMQ_PASS,
+    host=constants.RABBITMQ_HOST,
+    port=constants.RABBITMQ_PORT,
+    path=constants.RABBITMQ_PATH
 )
 rabbitmq.declareQueue(constants.RABBITMQ_COMMANDS_QUEUE)
 rabbitmq.declareQueue(constants.RABBITMQ_METRICS_QUEUE)
+
 
 def queue_message_callback(body):
     data = json.loads(body.decode('utf-8'))
@@ -30,30 +31,31 @@ def queue_message_callback(body):
     cmd = chr(ord(cmd) + data['id'])
     arduino.write(cmd)
 
+
 try:
     while True:
-        if rabbitmq.hasMessage(queue = constants.RABBITMQ_COMMANDS_QUEUE):
+        if rabbitmq.hasMessage(queue=constants.RABBITMQ_COMMANDS_QUEUE):
             rabbitmq.consume(
-                queue = constants.RABBITMQ_COMMANDS_QUEUE,
-                callback = queue_message_callback
+                queue=constants.RABBITMQ_COMMANDS_QUEUE,
+                callback=queue_message_callback
             )
         else:
             print("No Rabbit")
-        
+
         if arduino.hasMessage():
             message = arduino.read()
             print(f'DEBUG: Message read from arduino: {message}')
             rabbitmq.publish(
-                queue = constants.RABBITMQ_METRICS_QUEUE,
-                message = message
+                queue=constants.RABBITMQ_METRICS_QUEUE,
+                message=message
             )
-            print(f'INFO: Message enqueued')
+            print('INFO: Message enqueued')
         else:
             print("No Arduino")
 
         time.sleep(0.1)
 
 except KeyboardInterrupt:
-    print(f'INFO: Received Keyboard Interrupt')
+    print('INFO: Received Keyboard Interrupt')
     arduino.close()
     rabbitmq.close()

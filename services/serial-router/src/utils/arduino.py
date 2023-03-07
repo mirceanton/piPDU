@@ -1,5 +1,5 @@
-import utils.constants as constants
 import serial
+
 
 class Arduino:
     def __init__(self, device, baud_rate):
@@ -27,5 +27,5 @@ class Arduino:
         print(f'INFO: Sent message over serial: {message}')
 
     def close(self):
-        print(f'INFO: Closing the serial connection.')
+        print('INFO: Closing the serial connection.')
         self.ser.close()
