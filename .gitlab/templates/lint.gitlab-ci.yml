@@ -1,3 +1,4 @@
+---
 .flake8:
   stage: lint
   image: python:3.9

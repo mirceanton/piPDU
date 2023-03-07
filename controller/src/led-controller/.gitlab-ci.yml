@@ -1,7 +1,8 @@
 ---
-include: '.gitlab/templates/lint.gitlab-ci.yml'
-include: '.gitlab/templates/test.gitlab-ci.yml'
-include: '.gitlab/templates/docker-build.gitlab-ci.yml'
+include: 
+  - '.gitlab/templates/lint.gitlab-ci.yml'
+  - '.gitlab/templates/test.gitlab-ci.yml'
+  - '.gitlab/templates/docker-build.gitlab-ci.yml'
 
 variables:
   CI_SERVICE_REPO: controller/src/led-controller
