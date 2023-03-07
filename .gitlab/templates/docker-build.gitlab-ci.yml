@@ -27,7 +27,7 @@
   extends: .docker-build-base
   
   before_script:
-    - export IMAGE_TAG=$(cat VERSION)
+    - export IMAGE_TAG=$(cat $CI_SERVICE_REPO/VERSION)
 
   rules:
   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
