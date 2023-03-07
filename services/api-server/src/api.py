@@ -10,8 +10,8 @@ app.register_blueprint(ping_blueprint, url_prefix="/api/v1/ping")
 app.register_blueprint(sockets_all_blueprint, url_prefix="/api/v1/sockets/all")
 app.register_blueprint(sockets_by_id_blueprint, url_prefix="/api/v1/socket")
 
-print(f'INFO: Flask Server started on host {constants.API_HOST} on port {constants.API_PORT}')
+print(f'INFO: Flask Server started on {constants.API_HOST}:{constants.API_PORT}')
 app.run(
-    host = constants.API_HOST,
-    port = constants.API_PORT
+    host=constants.API_HOST,
+    port=constants.API_PORT
 )

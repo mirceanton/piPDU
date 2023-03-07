@@ -1,5 +1,6 @@
 import pika
 
+
 class RabbitMQ:
     def __init__(self, username, password, host, port, path):
         self.connection = None
@@ -19,14 +20,14 @@ class RabbitMQ:
             exit(1)
 
     def declareQueue(self, queue: str):
-        self.channel.queue_declare(queue = queue)
+        self.channel.queue_declare(queue=queue)
 
     def publish(self, queue: str, message: str):
         try:
             self.channel.basic_publish(
-                exchange = '',
-                routing_key = queue,
-                body = message
+                exchange='',
+                routing_key=queue,
+                body=message
             )
             print("INFO: Sent message to queue: " + message)
             return True, None
@@ -35,5 +36,5 @@ class RabbitMQ:
             return False, ex
 
     def close(self):
-        print(f'INFO: Closing the RabbitMQ Connection.')
+        print('INFO: Closing the RabbitMQ Connection.')
         self.connection.close()

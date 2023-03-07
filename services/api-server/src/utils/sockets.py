@@ -9,4 +9,5 @@ class Socket():
             'state': self.state
         }
 
+
 sockets = [Socket(i) for i in range(16)]
