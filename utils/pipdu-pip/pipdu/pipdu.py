@@ -8,6 +8,21 @@ class PiPDU:
     metricsPort: int
     metricsURL: str
 
+    def getGlobalMetrics(self) -> float:
+        pass
+
+    def getMetricsFor(self, socket_id: int) -> List[float]:
+        pass
+
+    def getStateFor(self, socket_id: int) -> bool:
+        pass
+
+    def setStateFor(self, socket_id: int, socket_state: bool) -> None:
+        pass
+
+    def testConnection(self) -> bool:
+        pass
+
     def __init__(self, certificate: str, host: str, apiPort: int = 3000, metricsPort: int = 8000):
         self.host = host
         self.apiPort = apiPort
