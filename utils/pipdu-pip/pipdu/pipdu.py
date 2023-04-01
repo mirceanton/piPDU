@@ -1,4 +1,5 @@
 from typing import List
+from prometheus_client.parser import text_string_to_metric_families
 import requests
 import json
 
@@ -9,11 +10,24 @@ class PiPDU:
     metricsPort: int
     metricsURL: str
 
-    def getGlobalMetrics(self) -> float:
-        pass
+    def getGlobalMetrics(self) -> List[float]:
+        response = requests.get(self.metricsURL)
+        metrics = text_string_to_metric_families(response.text)
 
-    def getMetricsFor(self, socket_id: int) -> List[float]:
-        pass
+        # Extract the gauges from the metrics
+        gauges = [metric for metric in metrics if metric.type == 'gauge' and metric.name.startswith('socket_')]
+
+        # Extract the values of the socket gauges
+        socket_values = [0] * len(gauges)
+        for gauge in gauges:
+            socket_id = int(gauge.name.split('_')[1])
+            socket_values[socket_id] = gauge.samples[0].value
+
+        # Return the list of socket values
+        return socket_values
+
+    def getMetricsFor(self, socket_id: int) -> float:
+        return self.getGlobalMetrics()[socket_id]
 
     def getStateFor(self, socket_id: int) -> bool:
         url = f"{self.apiURL}/socket/{socket_id}/info"
