@@ -18,7 +18,7 @@ def turn(id: int, state: bool):
     rabbitmq.declareQueue(constants.RABBITMQ_COMMANDS_QUEUE)
     status, err = rabbitmq.publish(
         queue=constants.RABBITMQ_COMMANDS_QUEUE,
-        message=json.dump({'id': id, 'state': state})
+        message=json.dumps({'id': id, 'state': state})
     )
     rabbitmq.close()
 
