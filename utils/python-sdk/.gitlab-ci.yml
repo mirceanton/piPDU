@@ -8,7 +8,7 @@ python-sdk/flake8:
   variables:
     CI_SERVICE_REPO: utils/python-sdk
 
-python-sdk/build:
+python-sdk/pip:
   extends: .pip
   variables:
     CI_SERVICE_REPO: utils/python-sdk
