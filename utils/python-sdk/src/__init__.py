@@ -3,6 +3,7 @@ from prometheus_client.parser import text_string_to_metric_families
 import requests
 import json
 
+
 class PiPDU:
     host: str
     apiPort: int
@@ -16,7 +17,8 @@ class PiPDU:
         metrics = text_string_to_metric_families(response.text)
 
         # Extract the gauges from the metrics
-        gauges = [metric for metric in metrics if metric.type == 'gauge' and metric.name.startswith('socket_')]
+        gauges = [metric for metric in metrics if metric.type ==
+                  'gauge' and metric.name.startswith('socket_')]
 
         # Extract the values of the socket gauges
         socket_values = [0] * len(gauges)
@@ -33,9 +35,10 @@ class PiPDU:
     def getStateFor(self, socket_id: int) -> bool:
         url = f"{self.apiURL}/socket/{socket_id}/info"
         response = requests.get(url, verify=self.ssl)
-        
+
         if (response.status_code != 200):
-            raise RuntimeError(f'GET Request to fetch socket {socket_id} status failed with code: {response.status_code} ({response.text})')
+            raise RuntimeError(
+                f'GET Request to fetch socket {socket_id} status failed with code: {response.status_code} ({response.text})')
 
         data = json.loads(response.text)
         return data['payload']['state']
@@ -45,7 +48,8 @@ class PiPDU:
         response = requests.post(url, verify=self.ssl)
 
         if (response.status_code != 200):
-            raise RuntimeError(f'POST Request to change socket {socket_id} status to {socket_state} failed with code: {response.status_code} ({response.text})')
+            raise RuntimeError(
+                f'POST Request to change socket {socket_id} status to {socket_state} failed with code: {response.status_code} ({response.text})')
 
     def testConnection(self) -> bool:
         url = f"{self.apiURL}/ping"
