@@ -21,7 +21,9 @@ class PiPDU:
         pass
 
     def testConnection(self) -> bool:
-        pass
+        url = f"{self.baseURL}/ping"
+        response = requests.get(url, verify=False)
+        return response.status_code == 200
 
     def __init__(self, certificate: str, host: str, apiPort: int = 3000, metricsPort: int = 8000):
         self.host = host
