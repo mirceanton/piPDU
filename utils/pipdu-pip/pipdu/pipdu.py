@@ -1,5 +1,6 @@
 from typing import List
 import requests
+import json
 
 class PiPDU:
     host: str
@@ -15,7 +16,14 @@ class PiPDU:
         pass
 
     def getStateFor(self, socket_id: int) -> bool:
-        pass
+        url = f"{self.apiURL}/socket/{socket_id}/info"
+        response = requests.get(url, verify=False)
+        
+        if (response.status_code != 200):
+            raise RuntimeError(f'GET Request to fetch socket {socket_id} status failed with code: {response.status_code} ({response.text})')
+
+        data = json.loads(response.text)
+        return data['payload']['state']
 
     def setStateFor(self, socket_id: int, socket_state: bool) -> None:
         url = f"{self.apiURL}/socket/{socket_id}/{'on' if socket_state else 'off'}"
