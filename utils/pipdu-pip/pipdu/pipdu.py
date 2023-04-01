@@ -18,10 +18,14 @@ class PiPDU:
         pass
 
     def setStateFor(self, socket_id: int, socket_state: bool) -> None:
-        pass
+        url = f"{self.apiURL}/socket/{socket_id}/{'on' if socket_state else 'off'}"
+        response = requests.post(url, verify=False)
+
+        if (response.status_code != 200):
+            raise RuntimeError(f'POST Request to change socket {socket_id} status to {socket_state} failed with code: {response.status_code} ({response.text})')
 
     def testConnection(self) -> bool:
-        url = f"{self.baseURL}/ping"
+        url = f"{self.apiURL}/ping"
         response = requests.get(url, verify=False)
         return response.status_code == 200
 
