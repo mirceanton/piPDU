@@ -1,12 +1,12 @@
 ---
-pipdu-pip/release:
+python-sdk/release:
   image: python:3.9
   stage: build
   variables:
     TWINE_PASSWORD: ${CI_JOB_TOKEN}
     TWINE_USERNAME: gitlab-ci-token
   before_script:
-    - cd utils/pipdu-pip
+    - cd utils/python-sdk
     - pip install build twine
   script:
     - python -m build
