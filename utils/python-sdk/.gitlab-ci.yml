@@ -1,14 +1,28 @@
 ---
-python-sdk/release:
-  image: python:3.9
-  stage: build
+include: 
+  - '.gitlab/templates/lint.gitlab-ci.yml'
+  - '.gitlab/templates/test.gitlab-ci.yml'
+  - '.gitlab/templates/pip-build.gitlab-ci.yml'
+  - '.gitlab/templates/pip-release.gitlab-ci.yml'
+
+python-sdk/flake8:
+  extends: .flake8
   variables:
-    TWINE_PASSWORD: ${CI_JOB_TOKEN}
-    TWINE_USERNAME: gitlab-ci-token
-  before_script:
-    - cd utils/python-sdk
-    - pip install build twine
-  script:
-    - export VERSION=$(cat VERSION)
-    - python -m build
-    - python -m twine upload --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/*
+    CI_SERVICE_REPO: utils/python-sdk
+
+python-sdk/pytest:
+  extends: .pytest
+  variables:
+    CI_SERVICE_REPO: utils/python-sdk
+
+python-sdk/build:
+  extends: .pip-build
+  variables:
+    CI_SERVICE_REPO: utils/python-sdk
+
+python-sdk/release:
+  extends: .pip-release
+  variables:
+    CI_SERVICE_REPO: utils/python-sdk
+  dependencies:
+    - python-sdk/build

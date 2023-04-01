@@ -1,0 +1,17 @@
+---
+.pip-build:
+  stage: build
+  image: python:3.9
+
+  variables:
+    TWINE_USERNAME: $PYPI_USERNAME
+    TWINE_PASSWORD: $PYPI_TOKEN
+
+  before_script:
+    - python --version
+    - pip install twine
+
+  script:
+    - cd $CI_SERVICE_REPO
+    - export VERSION=$(cat VERSION)
+    - python -m twine upload dist/*
