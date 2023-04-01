@@ -17,7 +17,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name='pipdu',
-    packages=['pipdu'],
+    packages=['pipdu-package'],
     version=version,
     license='MIT',
     description='PiPDU python SDK',
