@@ -1,6 +1,6 @@
 ---
 .pip-release:
-  stage: build
+  stage: release
   image: python:3.9
 
   variables:

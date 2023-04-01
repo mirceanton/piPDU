@@ -14,11 +14,15 @@ python-sdk/pytest:
   extends: .pytest
   variables:
     CI_SERVICE_REPO: utils/python-sdk
+  dependencies:
+    - python-sdk/flake8
 
 python-sdk/build:
   extends: .pip-build
   variables:
     CI_SERVICE_REPO: utils/python-sdk
+  dependencies:
+    - python-sdk/pytest
 
 python-sdk/release:
   extends: .pip-release
