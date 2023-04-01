@@ -18,4 +18,4 @@ include:
   - local: 'services/serial-router/.gitlab-ci.yml'
 
   # Utils
-  - local: 'utils/pipdu-pip/.gitlab-ci.yml'
+  - local: 'utils/python-sdk/.gitlab-ci.yml'
