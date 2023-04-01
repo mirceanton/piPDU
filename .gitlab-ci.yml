@@ -6,7 +6,7 @@ stages:
   - lint
   - test
   - build
-  - relaese
+  - release
 
 include:
   # Services
