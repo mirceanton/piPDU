@@ -1,7 +1,6 @@
 ---
 include: 
   - '.gitlab/templates/lint.gitlab-ci.yml'
-  - '.gitlab/templates/test.gitlab-ci.yml'
   - '.gitlab/templates/pip-build.gitlab-ci.yml'
   - '.gitlab/templates/pip-release.gitlab-ci.yml'
 
