@@ -38,7 +38,8 @@ class PiPDU:
 
         if (response.status_code != 200):
             raise RuntimeError(
-                f'GET Request to fetch socket {socket_id} status failed with code: {response.status_code} ({response.text})')
+                f'Failed to get socket status: {response.status_code} ({response.text})'
+            )
 
         data = json.loads(response.text)
         return data['payload']['state']
@@ -49,7 +50,8 @@ class PiPDU:
 
         if (response.status_code != 200):
             raise RuntimeError(
-                f'POST Request to change socket {socket_id} status to {socket_state} failed with code: {response.status_code} ({response.text})')
+                f'Failed to update socket status: {response.status_code} ({response.text})'
+            )
 
     def testConnection(self) -> bool:
         url = f"{self.apiURL}/ping"
