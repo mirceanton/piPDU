@@ -1,15 +1,11 @@
 import setuptools
 import os
 
-version_file = ""
-with open('VERSION', 'r') as f:
-    version_file = f.read().strip()
+version = os.environ.get('VERSION')
 job_id = os.environ.get('CI_JOB_ID')
 
-if os.environ.get('CI_COMMIT_BRANCH') == os.environ.get('CI_DEFAULT_BRANCH'):
-    version = version_file
-else:
-    version = f"{version_file}-{job_id}"
+if os.environ.get('CI_COMMIT_BRANCH') != os.environ.get('CI_DEFAULT_BRANCH'):
+    version = f"{version}-{job_id}"
 
 # Reads the content of your README.md into a variable to be used in the setup below
 with open("README.md", "r", encoding="utf-8") as fh:
