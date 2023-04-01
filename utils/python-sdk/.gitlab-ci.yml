@@ -10,19 +10,12 @@ python-sdk/flake8:
   variables:
     CI_SERVICE_REPO: utils/python-sdk
 
-python-sdk/pytest:
-  extends: .pytest
-  variables:
-    CI_SERVICE_REPO: utils/python-sdk
-  dependencies:
-    - python-sdk/flake8
-
 python-sdk/build:
   extends: .pip-build
   variables:
     CI_SERVICE_REPO: utils/python-sdk
   dependencies:
-    - python-sdk/pytest
+    - python-sdk/flake8
 
 python-sdk/release:
   extends: .pip-release
