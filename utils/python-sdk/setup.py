@@ -8,7 +8,8 @@ with open('VERSION', 'r') as f:
 if os.environ.get('CI_COMMIT_BRANCH') == os.environ.get('CI_DEFAULT_BRANCH'):
     version = version_file
 else:
-    version = f"{version_file}-os.environ['CI_COMMIT_TIMESTAMP']"
+    timestamp = os.environ['CI_COMMIT_TIMESTAMP']
+    version = f"{version_file}-{timestamp}"
 
 # Reads the content of your README.md into a variable to be used in the setup below
 with open("README.md", "r", encoding="utf-8") as fh:
