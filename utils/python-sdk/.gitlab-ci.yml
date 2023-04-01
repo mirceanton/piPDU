@@ -1,8 +1,7 @@
 ---
 include: 
   - '.gitlab/templates/lint.gitlab-ci.yml'
-  - '.gitlab/templates/pip-build.gitlab-ci.yml'
-  - '.gitlab/templates/pip-release.gitlab-ci.yml'
+  - '.gitlab/templates/pip.gitlab-ci.yml'
 
 python-sdk/flake8:
   extends: .flake8
