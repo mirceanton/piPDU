@@ -4,12 +4,12 @@ import os
 version_file = ""
 with open('VERSION', 'r') as f:
     version_file = f.read().strip()
+job_id = os.environ.get('CI_JOB_ID')
 
 if os.environ.get('CI_COMMIT_BRANCH') == os.environ.get('CI_DEFAULT_BRANCH'):
     version = version_file
 else:
-    timestamp = os.environ['CI_COMMIT_TIMESTAMP']
-    version = f"{version_file}-{timestamp}"
+    version = f"{version_file}-{job_id}"
 
 # Reads the content of your README.md into a variable to be used in the setup below
 with open("README.md", "r", encoding="utf-8") as fh:
