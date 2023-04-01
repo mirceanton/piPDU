@@ -1,5 +1,5 @@
 ---
-.pip-build:
+.pip-release:
   stage: build
   image: python:3.9
 
