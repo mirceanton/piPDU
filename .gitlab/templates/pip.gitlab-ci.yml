@@ -1,6 +1,6 @@
 ---
-.pip-release:
-  stage: release
+.pip:
+  stage: build
   image: python:3.9
 
   variables:
@@ -9,9 +9,10 @@
 
   before_script:
     - python --version
-    - pip install twine
+    - pip install -U twine
 
   script:
     - cd $CI_SERVICE_REPO
     - export VERSION=$(cat VERSION)
-    - python -m twine upload dist/*
+    - python setup.py sdist
+    - twine upload dist/*

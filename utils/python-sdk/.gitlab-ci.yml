@@ -10,15 +10,6 @@ python-sdk/flake8:
     CI_SERVICE_REPO: utils/python-sdk
 
 python-sdk/build:
-  extends: .pip-build
+  extends: .pip
   variables:
     CI_SERVICE_REPO: utils/python-sdk
-  dependencies:
-    - python-sdk/flake8
-
-python-sdk/release:
-  extends: .pip-release
-  variables:
-    CI_SERVICE_REPO: utils/python-sdk
-  dependencies:
-    - python-sdk/build
