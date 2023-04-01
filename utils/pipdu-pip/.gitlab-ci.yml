@@ -1,0 +1,13 @@
+---
+pipdu-pip/release:
+  image: python:3.9
+  stage: build
+  variables:
+    TWINE_PASSWORD: ${CI_JOB_TOKEN}
+    TWINE_USERNAME: gitlab-ci-token
+  before_script:
+    - cd utils/pipdu-pip
+    - pip install build twine
+  script:
+    - python -m build
+    - python -m twine upload --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/*
