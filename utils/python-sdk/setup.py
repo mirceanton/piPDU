@@ -11,6 +11,10 @@ if os.environ.get('CI_COMMIT_BRANCH') != os.environ.get('CI_DEFAULT_BRANCH'):
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
+print("===========================================")
+print(version)
+print("===========================================")
+
 setuptools.setup(
     name='pipdu',
     packages=['src'],
