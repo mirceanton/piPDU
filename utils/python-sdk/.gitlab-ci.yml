@@ -12,7 +12,7 @@ python-sdk/flake8:
     - .flake8
     - .mr-job
 
-api-server/pytest:
+python-sdk/pytest:
   variables:
     CI_SERVICE_REPO: utils/python-sdk
   extends:
