@@ -16,7 +16,7 @@
     - python --version
     - pip3 install -U twine
     - cd $CI_SERVICE_REPO
-    - export VERSION=$(cat VERSION)
+    - export VERSION="$(cat VERSION)$VERSION_SUFFIX"
 
   script:
     - python3 setup.py sdist
