@@ -6,17 +6,19 @@
   variables:
     TWINE_USERNAME: $PYPI_USERNAME
     TWINE_PASSWORD: $PYPI_TOKEN
+    VERSION_SUFFIX: ".dev$CI_JOB_ID"
 
   before_script:
     - python --version
-    - pip install -U twine build
-
-  script:
-    - cd $CI_SERVICE_REPO
+    - pip install -U twine
     - export VERSION=$(cat VERSION)
     - env | grep "VERSION"
     - env | grep "CI_JOB_ID"
     - env | grep "CI_DEFAULT_BRANCH"
     - env | grep "CI_COMMIT_BRANCH"
-    - build
+
+  script:
+    - cd $CI_SERVICE_REPO
+    - env | grep "VERSION"
+    - python3 setup.py sdist
     - twine upload dist/*
