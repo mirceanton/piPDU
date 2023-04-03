@@ -15,9 +15,9 @@
   before_script:
     - python --version
     - pip3 install -U twine
-
-  script:
     - cd $CI_SERVICE_REPO
     - export VERSION=$(cat VERSION)
+
+  script:
     - python3 setup.py sdist
     - twine upload dist/*

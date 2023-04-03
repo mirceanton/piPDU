@@ -14,7 +14,7 @@
   before_script:
     - python --version
     - pip install flake8
+    - cd $CI_SERVICE_REPO
 
   script:
-    - cd $CI_SERVICE_REPO
     - flake8 ./src/*

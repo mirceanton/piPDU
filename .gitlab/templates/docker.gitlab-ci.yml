@@ -8,9 +8,9 @@ include:
 
   before_script:
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_TOKEN
-  
-  script:
     - cd $CI_SERVICE_REPO
     - export IMAGE_TAG="$(cat VERSION)$VERSION_SUFFIX"
+  
+  script:
     - docker buildx create --use
     - docker buildx build --platform linux/arm/v6,linux/arm/v7,linux/arm64,linux/amd64 --tag $DOCKERHUB_USER/$IMAGE_NAME:$IMAGE_TAG . --push
