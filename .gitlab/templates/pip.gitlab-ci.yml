@@ -1,24 +1,42 @@
 ---
-.pip:
+.pip-build-base:
   stage: build
   image: python:3.9
 
   variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
     TWINE_USERNAME: $PYPI_USERNAME
     TWINE_PASSWORD: $PYPI_TOKEN
-    VERSION_SUFFIX: ".dev$CI_JOB_ID"
+
+  cache:
+    paths:
+      - .cache/pip
 
   before_script:
     - python --version
     - pip install -U twine
-    - export VERSION=$(cat VERSION)
-    - env | grep "VERSION"
-    - env | grep "CI_JOB_ID"
-    - env | grep "CI_DEFAULT_BRANCH"
-    - env | grep "CI_COMMIT_BRANCH"
 
   script:
     - cd $CI_SERVICE_REPO
-    - env | grep "VERSION"
+    - export VERSION=$(cat VERSION)
     - python3 setup.py sdist
     - twine upload dist/*
+
+.pip-build-mr:
+  extends: .pip-build-base
+
+  variables:
+    VERSION_SUFFIX: ".dev$CI_JOB_ID"
+
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      changes:
+        - $CI_SERVICE_REPO/**/*
+
+.pip-build-release:
+  extends: .pip-build-base
+
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - $CI_SERVICE_REPO/**/*
