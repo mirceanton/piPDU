@@ -1,10 +1,16 @@
 ---
 include: 
   - '.gitlab/templates/lint.gitlab-ci.yml'
+  - '.gitlab/templates/test.gitlab-ci.yml'
   - '.gitlab/templates/pip.gitlab-ci.yml'
 
 python-sdk/flake8:
   extends: .flake8
+  variables:
+    CI_SERVICE_REPO: utils/python-sdk
+
+api-server/pytest:
+  extends: .pytest
   variables:
     CI_SERVICE_REPO: utils/python-sdk
 
