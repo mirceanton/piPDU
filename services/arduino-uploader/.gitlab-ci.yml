@@ -1,7 +1,7 @@
 ---
 include:
   - '.gitlab/templates/rules.gitlab-ci.yml'
-  - '.gitlab/templates/docker-build.gitlab-ci.yml'
+  - '.gitlab/templates/docker.gitlab-ci.yml'
 
 arduino-uploader/docker-build-mr:
   extends:
