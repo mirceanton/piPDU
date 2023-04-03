@@ -5,7 +5,7 @@ version = os.environ.get('VERSION')
 job_id = os.environ.get('CI_JOB_ID')
 
 if os.environ.get('CI_COMMIT_BRANCH') != os.environ.get('CI_DEFAULT_BRANCH'):
-    version = f"{version}-{job_id}"
+    version = f"{version}.dev{job_id}"
 
 # Reads the content of your README.md into a variable to be used in the setup below
 with open("README.md", "r", encoding="utf-8") as fh:
