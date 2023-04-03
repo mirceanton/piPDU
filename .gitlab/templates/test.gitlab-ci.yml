@@ -3,29 +3,18 @@
   stage: test
   image: python:3.9
 
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-      changes:
-        - $CI_SERVICE_REPO/src/**/* # if source code has changed
-        - $CI_SERVICE_REPO/requirements* # if the dependencies have changed
-        - $CI_SERVICE_REPO/tests/**/* # if tests have changed
-
   variables:
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
 
   cache:
     paths:
       - .cache/pip
-      - venv/
 
   before_script:
     - python --version
-    - pip install virtualenv
-    - virtualenv venv
-    - source venv/bin/activate
+    - pip3 install -r requirements.txt
+    - pip3 install pytest
 
   script:
     - cd $CI_SERVICE_REPO
-    - pip3 install -r requirements.txt
-    - pip3 install -r requirements-dev.txt
     - pytest tests/*

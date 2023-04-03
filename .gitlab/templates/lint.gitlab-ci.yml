@@ -2,10 +2,6 @@
 .flake8:
   stage: lint
   image: python:3.9
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-      changes:
-        - $CI_SERVICE_REPO/src/**/*
 
   variables:
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
@@ -17,11 +13,8 @@
 
   before_script:
     - python --version
-    - pip install virtualenv
-    - virtualenv venv
-    - source venv/bin/activate
+    - pip install flake8
 
   script:
     - cd $CI_SERVICE_REPO
-    - pip3 install -r requirements-dev.txt
-    - flake8 --max-line-length=120 ./src/*
+    - flake8 ./src/*
