@@ -1,27 +1,36 @@
 ---
-include: 
+include:
+  - '.gitlab/templates/rules.gitlab-ci.yml'
   - '.gitlab/templates/lint.gitlab-ci.yml'
   - '.gitlab/templates/test.gitlab-ci.yml'
   - '.gitlab/templates/docker-build.gitlab-ci.yml'
 
 button-controller/flake8:
-  extends: .flake8
+  extends:
+    - .flake8
+    - .mr-job
   variables:
     CI_SERVICE_REPO: services/button-controller
 
 button-controller/pytest:
-  extends: .pytest
+  extends:
+    - .pytest
+    - .mr-job
   variables:
     CI_SERVICE_REPO: services/button-controller
 
 button-controller/docker-build-mr:
-  extends: .docker-build-mr
+  extends:
+    - .docker
+    - .mr-job
   variables:
     CI_SERVICE_REPO: services/button-controller
     IMAGE_NAME: pipdu-button-controller
 
 button-controller/docker-build-release:
-  extends: .docker-build-release
+  extends:
+    - .docker
+    - .release-job
   variables:
     CI_SERVICE_REPO: services/button-controller
     IMAGE_NAME: pipdu-button-controller

@@ -1,0 +1,18 @@
+---
+.mr-job:
+  variables:
+    VERSION_SUFFIX: ".dev$CI_MERGE_REQUEST_ID"
+
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      changes:
+        - $CI_SERVICE_REPO/**/*
+
+.release-job:
+  variables:
+    VERSION_SUFFIX: ""
+
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - $CI_SERVICE_REPO/**/*

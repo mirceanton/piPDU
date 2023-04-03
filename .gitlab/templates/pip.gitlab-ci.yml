@@ -1,5 +1,5 @@
 ---
-.pip-build-base:
+.pip:
   stage: build
   image: python:3.9
 
@@ -14,29 +14,10 @@
 
   before_script:
     - python --version
-    - pip install -U twine
+    - pip3 install -U twine
 
   script:
     - cd $CI_SERVICE_REPO
     - export VERSION=$(cat VERSION)
     - python3 setup.py sdist
     - twine upload dist/*
-
-.pip-build-mr:
-  extends: .pip-build-base
-
-  variables:
-    VERSION_SUFFIX: ".dev$CI_JOB_ID"
-
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-      changes:
-        - $CI_SERVICE_REPO/**/*
-
-.pip-build-release:
-  extends: .pip-build-base
-
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      changes:
-        - $CI_SERVICE_REPO/**/*

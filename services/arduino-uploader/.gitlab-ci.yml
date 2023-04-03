@@ -1,15 +1,20 @@
 ---
-include: 
+include:
+  - '.gitlab/templates/rules.gitlab-ci.yml'
   - '.gitlab/templates/docker-build.gitlab-ci.yml'
 
 arduino-uploader/docker-build-mr:
-  extends: .docker-build-mr
+  extends:
+    - .docker
+    - .mr-job
   variables:
     CI_SERVICE_REPO: services/arduino-uploader
     IMAGE_NAME: pipdu-arduino-uploader
 
 arduino-uploader/docker-build-release:
-  extends: .docker-build-release
+  extends:
+    - .docker
+    - .release-job
   variables:
     CI_SERVICE_REPO: services/arduino-uploader
     IMAGE_NAME: pipdu-arduino-uploader

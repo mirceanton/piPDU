@@ -1,20 +1,34 @@
 ---
-include: 
+include:
+  - '.gitlab/templates/rules.gitlab-ci.yml'
   - '.gitlab/templates/lint.gitlab-ci.yml'
   - '.gitlab/templates/test.gitlab-ci.yml'
   - '.gitlab/templates/pip.gitlab-ci.yml'
 
 python-sdk/flake8:
-  extends: .flake8
   variables:
     CI_SERVICE_REPO: utils/python-sdk
+  extends:
+    - .flake8
+    - .mr-job
 
 api-server/pytest:
-  extends: .pytest
   variables:
     CI_SERVICE_REPO: utils/python-sdk
+  extends:
+    - .pytest
+    - .mr-job
 
-python-sdk/pip:
-  extends: .pip-build-mr
+python-sdk/pip-mr:
   variables:
     CI_SERVICE_REPO: utils/python-sdk
+  extends:
+    - .pip
+    - .mr-job
+
+python-sdk/pip-release:
+  variables:
+    CI_SERVICE_REPO: utils/python-sdk
+  extends:
+    - .pip
+    - .release-job
