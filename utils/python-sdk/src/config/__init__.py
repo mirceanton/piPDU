@@ -7,6 +7,7 @@ API_VERSION_PARSERS = {
     },
 }
 
+
 def parse_yaml_config(file_path):
     with open(file_path, 'r') as f:
         config = yaml.safe_load(f)
