@@ -9,10 +9,14 @@
 
   before_script:
     - python --version
-    - pip install -U twine
+    - pip install -U twine build
 
   script:
     - cd $CI_SERVICE_REPO
     - export VERSION=$(cat VERSION)
-    - python setup.py sdist
+    - env | grep "VERSION"
+    - env | grep "CI_JOB_ID"
+    - env | grep "CI_DEFAULT_BRANCH"
+    - env | grep "CI_COMMIT_BRANCH"
+    - build
     - twine upload dist/*
