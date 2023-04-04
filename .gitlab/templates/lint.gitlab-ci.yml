@@ -17,4 +17,4 @@
     - cd $CI_SERVICE_REPO
 
   script:
-    - flake8 ./src/*
+    - flake8 .
