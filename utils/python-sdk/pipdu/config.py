@@ -1,5 +1,5 @@
 import yaml
-import .v1_0_0 as v1_0_0
+from . import v1_0_0 as v1_0_0
 
 API_VERSION_PARSERS = {
     'v1.0.0': {
