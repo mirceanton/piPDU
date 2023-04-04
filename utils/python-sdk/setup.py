@@ -14,7 +14,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     author='Mircea-Pavel Anton',
     author_email='contact@mirceanton.com',
-    url='https://gitlab.com/mirceanton/piPDU/-/tree/main/utils/pipdu-pip', 
+    url='https://gitlab.com/mirceanton/piPDU/-/tree/main/utils/python-sdk', 
     project_urls = {
         "Bug Tracker": "https://gitlab.com/mirceanton/piPDU/-/issues"
     },
