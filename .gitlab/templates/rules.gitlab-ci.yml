@@ -1,7 +1,7 @@
 ---
 .mr-job:
   variables:
-    VERSION_SUFFIX: ".dev$CI_MERGE_REQUEST_ID"
+    VERSION_SUFFIX: ".dev$CI_JOB_ID"
 
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
