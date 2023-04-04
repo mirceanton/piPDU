@@ -1,5 +1,4 @@
 import setuptools
-import os
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -7,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setuptools.setup(
     name='pipdu',
     packages=['src'],
-    version='1.0.0.dev215053772',
+    version='0.0.0',
     license='MIT',
     description='PiPDU python SDK',
     long_description=long_description,

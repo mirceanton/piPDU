@@ -22,7 +22,6 @@ python-sdk/pytest:
 python-sdk/pip-mr:
   variables:
     CI_SERVICE_REPO: utils/python-sdk
-    VERSION_SUFFIX: '.dev215053772'
   extends:
     - .pip
     - .mr-job
