@@ -1,2 +1,2 @@
-from config import parse_yaml_config
-from pdu import PiPDU
+from .pdu import PiPDU
+from .config import parse_yaml_config
