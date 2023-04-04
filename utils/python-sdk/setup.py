@@ -17,6 +17,6 @@ setuptools.setup(
     project_urls={
         "Bug Tracker": "https://gitlab.com/mirceanton/piPDU/-/issues"
     },
-    install_requires=['prometheus_client', 'requests'],
+    install_requires=['prometheus_client', 'requests', 'pyyaml'],
     keywords=["pypi", "pipdu", "mirceanton"],
 )
