@@ -9,6 +9,9 @@ class PiPDU:
     host: str
     apiPort: int
     metricsPort: int
+    certificate: str
+    apiURL: str
+    metricsURL: str
 
     def getGlobalMetrics(self) -> List[float]:
         response = requests.get(self.metricsURL)
