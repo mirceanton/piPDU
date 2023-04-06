@@ -4,8 +4,8 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name='pipdu-sdk',
-    packages=['pipdu-sdk'],
+    name='pipdu_sdk',
+    packages=['pipdu_sdk'],
     version='0.0.0',
     license='MIT',
     description='PiPDU python SDK',
@@ -13,7 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     author='Mircea-Pavel Anton',
     author_email='contact@mirceanton.com',
-    url='https://gitlab.com/mirceanton/piPDU/-/tree/main/utils/python-sdk',
+    url='https://gitlab.com/mirceanton/piPDU/-/tree/main/utils/python_sdk',
     project_urls={
         "Bug Tracker": "https://gitlab.com/mirceanton/piPDU/-/issues"
     },
