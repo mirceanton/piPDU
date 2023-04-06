@@ -1,4 +1,8 @@
 import click
+import pipdu_sdk
+
+
+servers = pipdu_sdk.config.parse_yaml_config('config.yml')
 
 @click.group()
 def pipductl():
@@ -6,20 +10,28 @@ def pipductl():
 
 @pipductl.command()
 def get_servers():
-    click.echo('Listing available servers')
+    for key,value in servers.items():
+        print(f"{key}:")
+        print(f"  host: {value.host}")
+        print(f"  apiPort: {value.apiPort}")
+        print(f"  metricsPort: {value.metricsPort}")
 
 @pipductl.command()
 @click.option('--server', '-S', type=str, required=True, help='List sockets for a particular server')
 @click.option('--socket', '-s', type=int, required=True, help='Set the state of a particular socket')
 @click.argument('state', type=click.Choice(['on', 'off']))
 def set_state(state, server, socket):
-    click.echo(f'Setting state for socket {socket} on server {server} to {state}')
+    if server not in servers:
+        raise NameError(f"Unknown server {server}")
+    servers.get(server).setStateFor(socket, state=="on")
 
 @pipductl.command()
 @click.option('--server', '-S', type=str, required=True, help='Get the state of sockets for a particular server')
 @click.option('--socket', '-s', type=int, required=True, help='Get the state of a particular socket')
 def get_state(server, socket):
-    click.echo(f'Getting state for socket {socket} on server {server}')
+    if server not in servers:
+        raise NameError(f"Unknown server {server}")
+    print(servers.get(server).getStateFor(socket))
 
 def validate_server_options(all_servers: bool | None, server: str | None, socket: int | None):
     if not server and not all_servers:
@@ -36,14 +48,14 @@ def get_amps(all_servers, server, socket):
     validate_server_options(all_servers, server, socket)
 
     if all_servers:
-        click.echo('Amps for all servers: XYZ Amps')
+        for server in servers:
+            print(f"{server}: {servers.get(server).getGlobalMetrics()}")
         return
 
-    if socket:
-        click.echo(f'Amps used by socket {socket} on server {server}')
+    if socket is not None:
+        print(servers.get(server).getMetricsFor(socket))
         return
 
-    click.echo(f'Amps used by server {server}')
-    return
+    print(servers.get(server).getGlobalMetrics())
 
 pipductl()
