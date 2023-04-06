@@ -1,5 +1,6 @@
 from pipdu_sdk import PiPDU
 
+
 def parse_client_config(data):
     if 'servers' not in data or not isinstance(data['servers'], dict):
         raise ValueError('Invalid or missing `servers`')
