@@ -1,0 +1,35 @@
+---
+include:
+  - '.gitlab/templates/rules.gitlab-ci.yml'
+  - '.gitlab/templates/lint.gitlab-ci.yml'
+  - '.gitlab/templates/test.gitlab-ci.yml'
+  - '.gitlab/templates/pip.gitlab-ci.yml'
+
+pipductl/flake8:
+  variables:
+    CI_SERVICE_REPO: utils/pipductl
+  extends:
+    - .flake8
+    - .mr-job
+
+pipductl/pytest:
+  variables:
+    CI_SERVICE_REPO: utils/pipductl
+  extends:
+    - .pytest
+    - .mr-job
+
+pipductl/pip-mr:
+  variables:
+    CI_SERVICE_REPO: utils/pipductl
+  extends:
+    - .pip
+    - .mr-job
+
+pipductl/pip-release:
+  variables:
+    CI_SERVICE_REPO: utils/pipductl
+  extends:
+    - .pip
+    - .release-job
+
