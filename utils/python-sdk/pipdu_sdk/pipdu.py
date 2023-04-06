@@ -56,7 +56,7 @@ class PiPDU:
         response = requests.get(url, verify=self.ssl)
         return response.status_code == 200
 
-    def __init__(self, name: str, host: str, apiPort: int = 3000, metricsPort: int = 8000, certificate: str = ""):
+    def __init__(self, host: str, name: str = "", apiPort: int = 3000, metricsPort: int = 8000, certificate: str = ""):
         self.name = name
         self.host = host
 
