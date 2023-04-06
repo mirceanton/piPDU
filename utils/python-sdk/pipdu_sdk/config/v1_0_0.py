@@ -16,6 +16,12 @@ def validate_server_dict(server):
     if not isinstance(server, dict):
         raise ValueError('Invalid `servers`. Expected list of maps.')
 
-    unsupported_keys = server.keys() - ['id', 'name', 'host', 'apiPort', 'metricsPort']
+    supported_keys = ['id', 'name', 'host', 'apiPort', 'metricsPort']
+    required_keys = ['id', 'host']
+
+    unsupported_keys = server.keys() - supported_keys
     if (len(unsupported_keys) > 0):
         raise ValueError(f"Unsupported key(s) in server: {unsupported_keys}")
+
+    if (len(server.keys()) != len(required_keys)):
+        raise ValueError(f"Missing key(s) in server: {required_keys - server.keys()}")
