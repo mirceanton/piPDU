@@ -19,9 +19,10 @@ def validate_server_dict(server):
     supported_keys = ['id', 'name', 'host', 'apiPort', 'metricsPort']
     required_keys = ['id', 'host']
 
-    unsupported_keys = server.keys() - supported_keys
+    unsupported_keys = set(server.keys()) - set(supported_keys)
     if (len(unsupported_keys) > 0):
         raise ValueError(f"Unsupported key(s) in server: {unsupported_keys}")
 
-    if (len(server.keys()) != len(required_keys)):
-        raise ValueError(f"Missing key(s) in server: {required_keys - server.keys()}")
+    for key in required_keys:
+        if key not in server:
+            raise ValueError(f"Missing key in server: {key}")
