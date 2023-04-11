@@ -1,6 +1,6 @@
 import utils.constants as constants
-from utils.rabbitmq import RabbitMQ
 from utils.sockets import sockets
+import os
 from flask import Blueprint, make_response, request
 import json
 
@@ -8,41 +8,25 @@ blueprint = Blueprint('sockets_by_id', __name__)
 
 
 def turn(id: int, state: bool):
-    rabbitmq = RabbitMQ(
-        username=constants.RABBITMQ_USER,
-        password=constants.RABBITMQ_PASS,
-        host=constants.RABBITMQ_HOST,
-        port=constants.RABBITMQ_PORT,
-        path=constants.RABBITMQ_PATH
-    )
-    rabbitmq.declareQueue(constants.RABBITMQ_COMMANDS_QUEUE)
-    status, err = rabbitmq.publish(
-        queue=constants.RABBITMQ_COMMANDS_QUEUE,
-        message=json.dumps({'id': id, 'state': state})
-    )
-    rabbitmq.close()
+    try:
+        # Open the named pipe for writing using a with block, in non-blocking mode
+        with os.open(constants.FIFO, os.O_WRONLY | os.O_NONBLOCK) as pipe:
+            os.write(pipe, json.dumps({'id': id, 'state': state}))
 
-    if err is None:
-        setState(id, state)
+        sockets[id].state = state
+
         return make_response({
             'status': True,
             'payload': {}
         }, 200)
 
-    return make_response({
-        'status': False,
-        'payload': {
-            'error': 'Unable to send message',
-        }
-    }, 500)
-
-
-def setState(id: int, state: bool):
-    sockets[id].state = state
-    return make_response({
-        'status': True,
-        'payload': {'message': 'Socket status updated'}
-    }, 200)
+    except Exception as e:
+        return make_response({
+            'status': False,
+            'payload': {
+                'error': 'Unable to send message',
+            }
+        }, 500)
 
 
 @blueprint.before_request
@@ -73,13 +57,3 @@ def turnOn(number: int):
 @blueprint.route('/<int:number>/off', methods=['POST'])
 def turnOff(number: int):
     return turn(number, False)
-
-
-@blueprint.route('/<int:number>/on', methods=['PUT'])
-def setStateOn(number: int):
-    return setState(number, True)
-
-
-@blueprint.route('/<int:number>/off', methods=['PUT'])
-def setStateOff(number: int):
-    return setState(number, False)
