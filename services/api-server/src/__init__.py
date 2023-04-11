@@ -1,4 +1,4 @@
-from globals import api_host, api_port
+from config import api_host, api_port
 from api import app
 
 

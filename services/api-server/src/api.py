@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from globals import relays
+from config import relays
 
 app = Flask(__name__)
 
