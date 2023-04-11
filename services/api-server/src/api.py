@@ -1,22 +1,54 @@
-import utils.constants as constants
-from routes.ping import blueprint as ping_blueprint
-from routes.sockets.all import blueprint as sockets_all_blueprint
-from routes.sockets.by_id import blueprint as sockets_by_id_blueprint
-from flask import Flask
-import os
+from flask import Flask, jsonify, request
+from relay import Relay
+from config import parse_yaml
 
-print(f'DEBUG: Creating named pipe {constants.FIFO}')
-if not os.path.exists(constants.FIFO):
-    os.mkfifo(constants.FIFO)
+relays = parse_yaml('config.yaml')
 
-# Create a Flask application and register the endpoints
 app = Flask(__name__)
-app.register_blueprint(ping_blueprint, url_prefix="/api/v1/ping")
-app.register_blueprint(sockets_all_blueprint, url_prefix="/api/v1/sockets/all")
-app.register_blueprint(sockets_by_id_blueprint, url_prefix="/api/v1/socket")
 
-print(f'INFO: Flask Server started on {constants.API_HOST}:{constants.API_PORT}')
-app.run(
-    host=constants.API_HOST,
-    port=constants.API_PORT
-)
+
+@app.route('/relays/<int:index>', methods=['GET'])
+def get_relay_state(index):
+    if index < 0 or index >= len(relays):
+        return jsonify({'error': 'Invalid relay index'}), 400
+
+    relay = relays[index]
+    return jsonify({'pin': relay.pin, 'state': relay.get_state()}), 200
+
+
+@app.route('/relays/<int:index>', methods=['PUT'])
+def set_relay_state(index):
+    if index < 0 or index >= len(relays):
+        return jsonify({'error': 'Invalid relay index'}), 400
+
+    state = request.args.get('state')
+    if state is None:
+        return jsonify({'error': 'Missing state parameter'}), 400
+    state = state.lower() == 'true'
+
+    relay = relays[index]
+    relay.set_state(state)
+
+    return jsonify({'pin': relay.pin, 'state': relay.get_state()}), 200
+
+
+@app.route('/relays', methods=['GET'])
+def get_all_relays_state():
+    states = [{'pin': r.pin, 'state': r.get_state()} for r in relays]
+    return jsonify(states), 200
+
+
+@app.route('/relays', methods=['PUT'])
+def set_all_relays_state():
+    state = request.args.get('state')
+    if state is None:
+        return jsonify({'error': 'Missing state parameter'}), 400
+    state = state.lower() == 'true'
+
+    for r in relays:
+        r.set_state(state)
+    return get_all_relays_state()
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=3000)
