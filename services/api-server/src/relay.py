@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)
-
+GPIO.setwarnings(False)
 
 class Relay:
     def __init__(self, pin, initialState=True, reversed=False):
