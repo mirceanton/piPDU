@@ -1,43 +1,36 @@
-from utils.rabbitmq import RabbitMQ
 from utils.prometheus import Prometheus
 import utils.constants as constants
+import os
 
 prometheus = Prometheus()
 
-rabbitmq = RabbitMQ(
-    username=constants.RABBITMQ_USER,
-    password=constants.RABBITMQ_PASS,
-    host=constants.RABBITMQ_HOST,
-    port=constants.RABBITMQ_PORT,
-    path=constants.RABBITMQ_PATH
-)
-rabbitmq.declareQueue(constants.RABBITMQ_METRICS_QUEUE)
+print(f'DEBUG: Creating named pipe {constants.FIFO}')
+if not os.path.exists(constants.FIFO):
+    os.mkfifo(constants.FIFO)
+
+print('DEBUG: Opening named pipe in read-only mode')
+pipe = open(constants.FIFO, 'r')
 
 
-# Define the callback function for handling incoming messages
-def queue_message_callback(ch, method, properties, body):
-    # Parse the message into a list of float values
-    message = body.decode('utf-8').rstrip()
-    print(f'INFO: Got message from queue: {message}')
-    values = message.split(' ')
+def pipe_message_callback(body):
+    if len(body) == 0:
+        return
+
+    print(f'DEBUG: Got message from pipe: {body}')
+    values = body.split(' ')
+    print(f'DEBUG: Parsed values as: {values}')
 
     if len(values) != 16:
         print(
-            f'WARNING: Invalid message format; incomplete values array: f{message}')
+            f'WARNING: Invalid message format; incomplete values array: f{body}')
     else:
         prometheus.update(map(float, values))
 
 
-rabbitmq.setConsumeCallback(
-    queue=constants.RABBITMQ_METRICS_QUEUE,
-    callback=queue_message_callback,
-    tag=constants.RABBITMQ_CONSUMER_TAG
-)
-
 try:
-    rabbitmq.startConsuming()
+    pipe_message_callback(pipe.read())
 except KeyboardInterrupt:
     print('INFO: Received Keyboard Interrupt')
-    rabbitmq.close()
+    pipe.close()
 except Exception as e:
     print(f'ERROR: An unexpected error occurred: {e}')
