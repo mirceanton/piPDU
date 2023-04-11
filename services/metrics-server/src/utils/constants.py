@@ -1,3 +1,3 @@
 import os
 
-FIFO = os.environ.get('FIFO', '/tmp/metrics_fifo')
+FIFO = os.environ.get('COMMANDS_FIFO', '/tmp/commands_fifo')
