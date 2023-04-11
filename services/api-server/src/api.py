@@ -1,8 +1,5 @@
 from flask import Flask, jsonify, request
-from relay import Relay
-from config import parse_yaml
-
-relays = parse_yaml('config.yaml')
+from globals import relays
 
 app = Flask(__name__)
 
@@ -48,7 +45,3 @@ def set_all_relays_state():
     for r in relays:
         r.set_state(state)
     return get_all_relays_state()
-
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=3000)
